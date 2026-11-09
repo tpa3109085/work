@@ -4,6 +4,18 @@ import {Cloud} from '../api.js';
 const config={supabaseUrl:'https://mwfhqffcxshifuezhmqf.supabase.co',publishableKey:'sb_publishable_test'};
 function store(){const data=new Map();return {getItem:k=>data.get(k),setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)};}
 const response=(value,status=200)=>({ok:status<400,status,text:async()=>JSON.stringify(value)});
+test('default browser fetch keeps the global receiver',async()=>{
+ const original=globalThis.fetch;
+ try{
+  globalThis.fetch=async function(){
+   if(this!==globalThis)throw new TypeError('Illegal invocation');
+   return response({access_token:'a',refresh_token:'r',expires_in:3600});
+  };
+  const cloud=new Cloud(config,store());
+  await cloud.login('test@example.invalid','test-only');
+  assert.equal(cloud.session().access_token,'a');
+ }finally{globalThis.fetch=original;}
+});
 test('unauthenticated reads never send network requests',async()=>{
  const cloud=new Cloud(config,store(),()=>assert.fail('network called'));
  await assert.rejects(cloud.data(),/請先登入/);
