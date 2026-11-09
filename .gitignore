@@ -1,0 +1,15 @@
+*
+!index.html
+!style.css
+!app.js
+!api.js
+!core.js
+!config.js
+!package.json
+!.nojekyll
+!.gitignore
+!README.md
+!test/
+!test/*.test.js
+!supabase/
+!supabase/schema.sql
