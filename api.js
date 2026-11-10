@@ -28,4 +28,5 @@ export class Cloud{
  }
  async complete(key,completed){return this.request('/rest/v1/rpc/mc_cloud_set_completed',{method:'POST',body:{p_key:key,p_completed:completed}});}
  async setDeadline(key,mode,day=null,clock=null){return this.request('/rest/v1/rpc/mc_cloud_set_deadline',{method:'POST',body:{p_key:key,p_mode:mode,p_date:day,p_time:clock}});}
+ async setAssignment(key,value){return this.request('/rest/v1/rpc/mc_cloud_set_assignment',{method:'POST',body:{p_key:key,p_value:value}});}
 }

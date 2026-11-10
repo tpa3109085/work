@@ -1,0 +1,6 @@
+.original{margin-top:9px}
+.original summary{font-size:12px;color:#315d88;cursor:pointer}
+.original-text{max-height:270px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 0;padding:10px;border:1px solid #e2e8f0;border-radius:7px;background:#f8fafc;font:12px/1.65 ui-monospace,Consolas,monospace}
+.assignment{min-width:180px}
+.assignment-editor{display:block;width:100%;min-height:64px;resize:vertical;border:1px solid #cdd6e2;border-radius:8px;padding:8px;font:inherit;color:inherit}
+.assignment-editor:focus{outline:2px solid #6398d8;outline-offset:2px}

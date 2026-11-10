@@ -6,6 +6,12 @@ let cloud,all=[],editing=null,busy=false;
 try{cloud=new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
 function showLogin(){all=[];$('rows').replaceChildren();$('workspace').hidden=true;$('loginPanel').hidden=false;$('logout').hidden=true;}
 function node(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;}
+function original(row){const details=node('details',undefined,'original');const summary=node('summary','查看原文');const content=node('pre',row.original_text||'原文尚未同步','original-text');details.append(summary,content);return details;}
+function assignment(row){
+ const cell=node('td',undefined,'assignment');const editor=node('textarea',row.assignment,'assignment-editor');editor.maxLength=2000;editor.setAttribute('aria-label','交辦情形');editor.placeholder='例如：已交辦、追蹤中、待回覆';
+ const save=node('button','保存','secondary small');save.addEventListener('click',async()=>{const value=editor.value.trim();save.disabled=true;try{await cloud.setAssignment(row.todo_key,value);await load();}catch(e){$('error').textContent=e.message;}finally{save.disabled=false;}});
+ cell.append(editor,save);return cell;
+}
 function render(){
  const pending=all.filter(x=>!x.completed),count=s=>pending.filter(x=>x.deadline.status===s).length;
  $('stats').replaceChildren(...[['待辦總數',all.length],['未完成',pending.length],['已完成',all.length-pending.length],['逾期未完成',count('已逾期')],['今天到期',count('今天到期')]].map(([label,value])=>{const card=node('div',undefined,'stat');card.append(node('span',label),node('strong',String(value)));return card;}));
@@ -19,9 +25,9 @@ function render(){
   const row=node('tr',undefined,x.completed?'done':'');const check=node('input',undefined,'check');check.type='checkbox';check.checked=x.completed;check.setAttribute('aria-label','標記完成');
   check.addEventListener('change',async()=>{check.disabled=true;try{await cloud.complete(x.todo_key,check.checked);await load();}catch(e){check.checked=x.completed;$('error').textContent=e.message;}finally{check.disabled=false;}});
   const completed=node('td');completed.append(check);const priority=node('td',x.priority,'priority '+x.priority);
-  const task=node('td',undefined,'task');task.append(node('div',x.task,'task-title'),node('div',`${x.source_type} · ${x.subject||''}`,'task-note'),node('div','AI 辨識 · 原文請於本機核對','task-note'));
+  const task=node('td',undefined,'task');task.append(node('div',x.task,'task-title'),node('div',`${x.source_type} · ${x.subject||''}`,'task-note'),original(x));
   const owner=node('td',x.assigned_to||'待確認');const due=node('td');due.append(node('span',x.deadline.display,'badge '+(x.deadline.status==='已逾期'?'overdue':x.deadline.status==='今天到期'?'today':'')),node('div',x.deadline.status+' · '+x.deadline.label,'task-note'));
-  const edit=node('button','修改期限','secondary small');edit.addEventListener('click',()=>openDeadline(x));due.append(edit);row.append(completed,priority,task,owner,due);return row;
+  const edit=node('button','修改期限','secondary small');edit.addEventListener('click',()=>openDeadline(x));due.append(edit);row.append(completed,priority,task,owner,assignment(x),due);return row;
  }));
 }
 async function load(){
