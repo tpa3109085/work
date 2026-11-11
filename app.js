@@ -1,6 +1,7 @@
-import config from './config.js';
-import {Cloud} from './api.js';
-import {deadline,mergeRows,validDate,validTime} from './core.js';
+import {selectDashboardView} from './dashboard.js?v=20261112-mobile1';
+import config from './config.js?v=20261112-mobile1';
+import {Cloud} from './api.js?v=20261112-mobile1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261112-mobile1';
 const $=id=>document.getElementById(id);
 let cloud,all=[],editing=null,busy=false;
 try{cloud=new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
@@ -14,7 +15,7 @@ function assignment(row){
 }
 function render(){
  const pending=all.filter(x=>!x.completed),count=s=>pending.filter(x=>x.deadline.status===s).length;
- $('stats').replaceChildren(...[['今日待辦',count('今天到期'),'today','今日截止 · 優先處理'],['逾期未完成',count('已逾期'),'overdue','已超過期限 · 立即追蹤'],['未完成',pending.length,'pending','所有待處理事項'],['已完成',all.length-pending.length,'done','查看完成紀錄'],['待辦總數',all.length,'all','查看全部事項']].map(([label,value,view,hint])=>{const card=node('button',undefined,'stat stat-'+view);card.type='button';card.setAttribute('aria-pressed','false');card.append(node('span',label),node('strong',String(value)),node('small',hint+' ↗'));card.addEventListener('click',()=>selectDashboard(view));return card;}));
+ $('stats').replaceChildren(...[['今日待辦',count('今天到期'),'today','今日截止 · 優先處理'],['逾期未完成',count('已逾期'),'overdue','已超過期限 · 立即追蹤'],['未完成',pending.length,'pending','所有待處理事項'],['已完成',all.length-pending.length,'done','查看完成紀錄'],['待辦總數',all.length,'all','查看全部事項']].map(([label,value,view,hint])=>{const card=node('button',undefined,'stat stat-'+view);card.type='button';card.dataset.view=view;card.setAttribute('aria-pressed','false');card.append(node('span',label),node('strong',String(value)),node('small',hint+' ↗'));card.addEventListener('click',()=>selectDashboard(view));return card;}));
  const urgent=pending.filter(x=>x.priority==='P1').length;
  $('reminders').hidden=!(urgent||count('已逾期')||count('今天到期'));
  $('reminders').textContent=`期限提醒：逾期未完成 ${count('已逾期')} 項 · 今天到期 ${count('今天到期')} 項 · P1 未完成 ${urgent} 項`;
@@ -31,15 +32,7 @@ function render(){
   const edit=node('button','修改期限','secondary small');edit.addEventListener('click',()=>openDeadline(x));due.append(edit);row.append(completed,priority,task,owner,assignment(x),due);return row;
  }));
 }
-function selectDashboard(view){
- for(const id of ['search','source','priority','status'])$(id).value='';
- $('completion').value=view==='done'?'done':view==='all'?'':'pending';
- $('status').value=view==='today'?'今天到期':view==='overdue'?'已逾期':'';
- render();
- $('taskListTitle').textContent=({today:'今日待辦',overdue:'逾期未完成',pending:'未完成事項',done:'已完成事項',all:'全部事項'})[view];
- document.querySelectorAll('#stats .stat').forEach(card=>card.setAttribute('aria-pressed',String(card.classList.contains('stat-'+view))));
- $('taskListTitle').focus({preventScroll:true});$('taskListTitle').scrollIntoView({behavior:'smooth',block:'start'});
-}
+function selectDashboard(view){selectDashboardView(view,document,render);}
 async function load(){
  if(editing)return;
  try{const data=await cloud.data();all=mergeRows(data.todos,data.states);$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
