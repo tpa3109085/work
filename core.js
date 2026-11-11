@@ -32,7 +32,8 @@ export function deadline(row,state={},now=new Date()){
 }
 export function mergeRows(todos,states,now=new Date()){
  const map=new Map(states.map(s=>[s.todo_key,s]));
- return todos.map(row=>{const state=map.get(row.todo_key)||{};return {...row,state,
+ const visible=todos.filter(row=>!(row.todo_key==='a'.repeat(64)&&row.subject==='虚构测试资料，不是真实 LINE 聊天'&&row.task==='【连接测试】确认线上待办能够读取和保存'));
+ return visible.map(row=>{const state=map.get(row.todo_key)||{};return {...row,state,
   completed:state.completed_updated_at?!!state.completed:!!row.source_completed,
   assignment:state.assignment_updated_at?(state.assignment_status||''):'',deadline:deadline(row,state,now)};})
  .sort((a,b)=>Number(a.completed)-Number(b.completed)||(['P1','P2','P3','P4','待確認'].indexOf(a.priority)-['P1','P2','P3','P4','待確認'].indexOf(b.priority))||(a.deadline.day||'9999').localeCompare(b.deadline.day||'9999')||a.todo_key.localeCompare(b.todo_key));

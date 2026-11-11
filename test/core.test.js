@@ -2,6 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {validateConfig,taipeiDay,deadline,mergeRows,validDate} from '../core.js';
 const url='https://mwfhqffcxshifuezhmqf.supabase.co';
+test('connection fixture is excluded without hiding real tasks',()=>{
+ const fixture={todo_key:'a'.repeat(64),subject:'虚构测试资料，不是真实 LINE 聊天',task:'【连接测试】确认线上待办能够读取和保存',priority:'P3'};
+ const real={...fixture,todo_key:'b'.repeat(64),task:'真實工作事項'};
+ assert.deepEqual(mergeRows([fixture,real],[]).map(x=>x.todo_key),[real.todo_key]);
+ assert.equal(mergeRows([{...fixture,subject:'實際工作主旨'}],[]).length,1);
+});
 test('public configuration accepts public keys and rejects privileged keys',()=>{
  assert.equal(validateConfig({supabaseUrl:url,publishableKey:'sb_publishable_test'}).url,url);
  for(const key of ['sb_secret_test','',`x.${btoa(JSON.stringify({role:'service_role'}))}.x`])assert.throws(()=>validateConfig({supabaseUrl:url,publishableKey:key}));
