@@ -1,7 +1,7 @@
-import {selectDashboardView} from './dashboard.js?v=20261112-mobile1';
-import config from './config.js?v=20261112-mobile1';
-import {Cloud} from './api.js?v=20261112-mobile1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261112-mobile1';
+import {selectDashboardView} from './dashboard.js?v=20261112-home2';
+import config from './config.js?v=20261112-home2';
+import {Cloud} from './api.js?v=20261112-home2';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261112-home2';
 const $=id=>document.getElementById(id);
 let cloud,all=[],editing=null,busy=false;
 try{cloud=new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
@@ -53,3 +53,18 @@ for(const id of ['source','priority','status','completion'])$(id).addEventListen
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session())load();setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
+const BUILD='20261112-home2';
+async function resumeHomeScreen(){
+ if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
+ try{
+  const response=await fetch('./version.json',{cache:'no-store'});
+  if(response.ok){const {version}=await response.json();
+   if(typeof version==='string'&&/^[a-zA-Z0-9-]+$/.test(version)&&version!==BUILD&&sessionStorage.getItem('mc-reloaded-build')!==version){
+    sessionStorage.setItem('mc-reloaded-build',version);const url=new URL(location.href);url.searchParams.set('v',version);location.replace(url.href);return;
+   }
+  }
+ }catch{}
+ if(cloud?.session())await load();
+}
+window.addEventListener('pageshow',resumeHomeScreen);
+document.addEventListener('visibilitychange',resumeHomeScreen);
