@@ -1,4 +1,4 @@
-import {validateConfig} from './core.js?v=20261112-home2';
+import {validateConfig} from './core.js?v=20261112-status1';
 export class Cloud{
  constructor(config,storage=localStorage,fetcher=globalThis.fetch.bind(globalThis)){Object.assign(this,validateConfig(config));this.storage=storage;this.fetcher=fetcher;this.storageKey='messagecontrol-auth:'+this.url;this.refreshing=null;}
  session(){try{return JSON.parse(this.storage.getItem(this.storageKey)||'null');}catch{return null;}}
