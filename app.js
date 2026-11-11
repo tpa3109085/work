@@ -19,7 +19,8 @@ function render(){
  $('reminders').hidden=!(urgent||count('已逾期')||count('今天到期'));
  $('reminders').textContent=`期限提醒：逾期未完成 ${count('已逾期')} 項 · 今天到期 ${count('今天到期')} 項 · P1 未完成 ${urgent} 項`;
  const query=$('search').value.toLowerCase().trim();
- const rows=all.filter(x=>(!$('source').value||x.source_type===$('source').value)&&(!$('priority').value||x.priority===$('priority').value)&&(!$('status').value||x.deadline.status===$('status').value)&&(!$('completion').value||(x.completed?$('completion').value==='done':$('completion').value==='pending'))&&(!query||[x.task,x.subject,x.assigned_to].join(' ').toLowerCase().includes(query)));
+ const rows=all.filter(x=>(!$('source').value||x.source_type===$('source').value)&&(!$('priority').value||x.priority===$('priority').value)&&(!$('status').value||x.deadline.status===$('status').value)&&(!$('completion').value||(x.completed?$('completion').value==='done':$('completion').value==='pending'))&&(!query||[x.task,x.subject,x.assigned_to,x.assignment].join(' ').toLowerCase().includes(query)));
+ $('resultCount').textContent=`顯示 ${rows.length} 項 · 共 ${all.length} 項待辦`;
  $('empty').hidden=!!rows.length;
  $('rows').replaceChildren(...rows.map(x=>{
   const row=node('tr',undefined,x.completed?'done':'');const check=node('input',undefined,'check');check.type='checkbox';check.checked=x.completed;check.setAttribute('aria-label','標記完成');

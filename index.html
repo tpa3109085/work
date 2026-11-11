@@ -2,7 +2,8 @@
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src https://*.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
 <title>MessageControl｜線上待辦</title><link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./extras.css"><script type="module" src="./app.js"></script></head>
-<body><main><header><div><p class="eyebrow">MESSAGECONTROL</p><h1>線上待辦</h1><p class="sub">把交辦、期限與完成進度放在同一處。</p></div><button id="logout" class="secondary" hidden>登出</button></header>
+<body><main><header><div><p class="eyebrow">MESSAGECONTROL</p><h1>每日待辦與群組分析</h1><p class="sub">查看交辦、期限與完成進度；在本機啟動 LINE 群組匯出與分析。</p></div><button id="logout" class="secondary" hidden>登出</button></header>
+<section class="panel local-control" aria-labelledby="localControlTitle"><div><p class="eyebrow">WINDOWS 本機操作</p><h2 id="localControlTitle">LINE 群組匯出與分析</h2><p>在安裝 MessageControl 的電腦上開啟本機控制台，即可輸入群組名稱、查看處理進度及調整群組監控。</p></div><a class="button-link" href="http://127.0.0.1:8765/" target="_blank" rel="noopener noreferrer">開啟本機控制台</a></section>
 <section id="loginPanel" class="panel login"><h2>登入你的工作清單</h2><p>網站網址可公開分享；待辦資料需要登入後才能讀取。</p>
 <div id="setup" class="notice" hidden>網站尚未連接資料服務。完成部署設定後即可登入。</div>
 <form id="loginForm"><label for="email">電子郵件</label><input id="email" type="email" autocomplete="username" required>
@@ -13,7 +14,7 @@
 <select id="source" aria-label="來源"><option value="">全部來源</option><option>LINE</option><option value="Email">郵件</option></select>
 <select id="priority" aria-label="優先級"><option value="">全部優先級</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>待確認</option></select>
 <select id="status" aria-label="期限狀態"><option value="">全部期限</option><option>已逾期</option><option>今天到期</option><option>未到期</option><option>未設定</option></select>
-<select id="completion" aria-label="完成狀態"><option value="">全部進度</option><option value="pending">未完成</option><option value="done">已完成</option></select><button id="refresh" class="secondary">重新整理</button></div>
-<p id="updated" class="muted"></p><p id="error" class="error" role="alert"></p><div class="table-wrap"><table><thead><tr><th>完成</th><th>優先級</th><th>待辦／來源</th><th>承辦人</th><th>交辦情形</th><th>期限</th></tr></thead><tbody id="rows"></tbody></table></div><p id="empty" class="empty" hidden>目前沒有符合條件的待辦。</p></section></section>
+<select id="completion" aria-label="完成狀態"><option value="pending" selected>未完成</option><option value="">全部進度</option><option value="done">已完成</option></select><button id="refresh" class="secondary">重新整理</button></div>
+<p id="updated" class="muted"></p><p id="resultCount" class="muted" aria-live="polite"></p><p id="error" class="error" role="alert"></p><div class="table-wrap"><table><thead><tr><th>完成</th><th>優先級</th><th>待辦／來源</th><th>承辦人</th><th>交辦情形</th><th>期限</th></tr></thead><tbody id="rows"></tbody></table></div><p id="empty" class="empty" hidden>目前沒有符合條件的待辦。</p></section></section>
 <dialog id="deadlineDialog" aria-labelledby="deadlineTitle"><h2 id="deadlineTitle">修改期限</h2><p id="deadlineTask"></p><p id="analysisDeadline" class="muted"></p><label for="deadlineDate">截止日期</label><input id="deadlineDate" type="date"><label for="deadlineTime">截止時間（選填）</label><input id="deadlineTime" type="time"><p class="muted">以台北時間計算。時間留空表示當日截止；手動期限會保留到你恢復分析結果為止。</p><p id="deadlineError" class="error" role="alert"></p><div class="actions"><button id="saveDeadline">保存手動期限</button><button id="resetDeadline" class="secondary">恢復分析期限</button><button id="clearDeadline" class="secondary">設為無期限</button><button id="cancelDeadline" class="secondary">取消</button></div></dialog>
 <footer>私人工作資料 · 登入後跨裝置同步 · 台北時間</footer></main></body></html>

@@ -13,3 +13,8 @@ button{background:#196c88}
 button:hover:not(:disabled){filter:none;background:#124b66}
 input:focus,select:focus{outline-color:#4aa7a4}
 @media(max-width:760px){main>header{padding:23px 20px}main>header h1{font-size:29px}}
+.local-control{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px;background:linear-gradient(120deg,#fff,#f1faf9)}
+.local-control h2{margin:3px 0 8px}.local-control p:not(.eyebrow){margin:0;color:#557080;line-height:1.65}
+.local-control .eyebrow{color:#247779}.button-link{display:inline-block;flex:none;padding:11px 16px;border-radius:9px;background:#176d80;color:white;text-decoration:none;font-weight:700}
+.button-link:hover,.button-link:focus-visible{background:#124b66}#resultCount{margin:4px 0 0}
+@media(max-width:760px){.local-control{display:block}.button-link{margin-top:16px}}
