@@ -1,11 +1,12 @@
-import {renderOriginal} from './originals.js?v=20261116-open1';
-import {readImages,renderImages} from './images.js?v=20261116-open1';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-open1';
-import {readAutomation,renderAutomation} from './automation.js?v=20261116-open1';
-import {selectDashboardView} from './dashboard.js?v=20261116-open1';
-import config from './config.js?v=20261116-open1';
-import {Cloud} from './api.js?v=20261116-open1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-open1';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-groups1';
+import {renderOriginal} from './originals.js?v=20261116-groups1';
+import {readImages,renderImages} from './images.js?v=20261116-groups1';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-groups1';
+import {readAutomation,renderAutomation} from './automation.js?v=20261116-groups1';
+import {selectDashboardView} from './dashboard.js?v=20261116-groups1';
+import config from './config.js?v=20261116-groups1';
+import {Cloud} from './api.js?v=20261116-groups1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-groups1';
 const $=id=>document.getElementById(id);
 let cloud,all=[],editing=null,busy=false;
 try{cloud=new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
@@ -25,7 +26,7 @@ function render(){
  $('reminders').hidden=!(urgent||count('已逾期')||count('今天到期'));
  $('reminders').textContent=`期限提醒：逾期未完成 ${count('已逾期')} 項 · 今天到期 ${count('今天到期')} 項 · P1 未完成 ${urgent} 項`;
  const query=$('search').value.toLowerCase().trim();
- const rows=all.filter(x=>(!$('source').value||x.source_type===$('source').value)&&(!$('priority').value||x.priority===$('priority').value)&&matchesDueFilter(x,$('status').value)&&(!$('completion').value||(x.completed?$('completion').value==='done':$('completion').value==='pending'))&&(!query||[x.task,x.subject,x.assigned_to,x.assignment].join(' ').toLowerCase().includes(query)));
+ const rows=all.filter(x=>matchesSource(x,$('source').value)&&(!$('priority').value||x.priority===$('priority').value)&&matchesDueFilter(x,$('status').value)&&(!$('completion').value||(x.completed?$('completion').value==='done':$('completion').value==='pending'))&&(!query||[x.task,x.subject,x.assigned_to,x.assignment].join(' ').toLowerCase().includes(query)));
  $('resultCount').textContent=`顯示 ${rows.length} 項 · 共 ${all.length} 項待辦`;
  $('empty').hidden=!!rows.length;
  $('rows').replaceChildren(...rows.map(x=>{
@@ -40,7 +41,7 @@ function render(){
 function selectDashboard(view){selectDashboardView(view,document,render);}
 async function load(){
  if(editing||document.querySelector('.original[open]'))return;
- try{const data=await cloud.data();all=mergeRows(data.todos,data.states);renderImages(readImages(data.todos),$('imagesPanel'));renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
+ try{const data=await cloud.data();all=mergeRows(data.todos,data.states);renderSourceOptions($('source'),all);renderImages(readImages(data.todos),$('imagesPanel'));renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
  catch(e){if(!cloud.session())showLogin();$('loginError').textContent=$('error').textContent=e.message;}
 }
 function openDeadline(row){editing=row;$('deadlineTask').textContent=row.task;$('analysisDeadline').textContent='分析期限：'+deadline(row).display;$('deadlineDate').value=row.deadline.day;$('deadlineTime').value=row.deadline.clock;$('deadlineError').textContent='';$('deadlineDialog').showModal();}
@@ -58,7 +59,7 @@ for(const id of ['source','priority','status','completion'])$(id).addEventListen
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session())load();setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261116-open1';
+const BUILD='20261116-groups1';
 async function resumeHomeScreen(){
  if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
  try{
