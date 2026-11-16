@@ -1,5 +1,5 @@
 export function readImages(rows){
- return rows.filter(x=>x.subject==='MessageControl 圖片來源 v1'&&x.task==='LINE 圖片預覽（系統資料）').flatMap(x=>{try{const image=JSON.parse(x.original_text);return image.kind==='mc_line_image_v1'&&image.image_key===x.todo_key?[image]:[];}catch{return [];}});
+ return rows.filter(x=>x.subject==='MessageControl 圖片來源 v1'&&x.task==='LINE 圖片預覽（系統資料）').flatMap(x=>{try{const image=JSON.parse(x.original_text);return image.kind==='mc_line_image_v1'&&image.image_key===x.todo_key&&!['deleted_reference','expired'].includes(image.status)?[image]:[];}catch{return [];}});
 }
 export function isImageMetadata(row){return row.subject==='MessageControl 圖片來源 v1'&&row.task==='LINE 圖片預覽（系統資料）';}
 export function renderImages(images,panel,{link}={}){

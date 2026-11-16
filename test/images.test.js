@@ -7,4 +7,5 @@ test('image metadata never inflates task counts and malformed payloads are ignor
  assert.equal(mergeRows([metadata],[]).length,0);assert.equal(readImages([metadata]).length,1);
  assert.equal(readImages([{...metadata,original_text:'bad'}]).length,0);
  assert.equal(readImages([{...metadata,todo_key:'c'.repeat(64)}]).length,0);
+ for(const status of ['deleted_reference','expired'])assert.equal(readImages([{...metadata,original_text:JSON.stringify({kind:'mc_line_image_v1',image_key:metadata.todo_key,status})}]).length,0);
 });

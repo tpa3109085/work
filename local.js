@@ -1,5 +1,5 @@
-import {REMOTE_KEYS,REMOTE_KIND} from './remote.js?v=20261116-grouped1';
-import {AUTOMATION_KEY} from './automation.js?v=20261116-grouped1';
+import {REMOTE_KEYS,REMOTE_KIND} from './remote.js?v=20261116-retention1';
+import {AUTOMATION_KEY} from './automation.js?v=20261116-retention1';
 export function localRows(data){
  const stamp='2000-01-01T00:00:00Z';
  const todos=data.todos.map(row=>({todo_key:row.key,task:row.task,subject:row.subject,source_type:row.source_type==='LINE'?'LINE':'Email',assigned_to:row.assigned_to,priority:row.priority,analysis_date:row.analysis_deadline_date||null,analysis_time:row.analysis_deadline_time||null,analysis_note:row.analysis_due_display,source_completed:!!row.completed,original_text:'',source_url:row.source_url}));
