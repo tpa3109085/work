@@ -1,21 +1,21 @@
-import {LocalCloud} from './local.js?v=20261116-unified1';
-import {GroupSettings,readRegistry} from './groups.js?v=20261116-unified1';
-import {RemoteControl} from './remote.js?v=20261116-unified1';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-unified1';
-import {renderOriginal} from './originals.js?v=20261116-unified1';
-import {readImages,renderImages} from './images.js?v=20261116-unified1';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-unified1';
-import {readAutomation,renderAutomation} from './automation.js?v=20261116-unified1';
-import {selectDashboardView} from './dashboard.js?v=20261116-unified1';
-import config from './config.js?v=20261116-unified1';
-import {Cloud} from './api.js?v=20261116-unified1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-unified1';
+import {LocalCloud} from './local.js?v=20261116-unified2';
+import {GroupSettings,readRegistry} from './groups.js?v=20261116-unified2';
+import {RemoteControl} from './remote.js?v=20261116-unified2';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-unified2';
+import {renderOriginal} from './originals.js?v=20261116-unified2';
+import {readImages,renderImages} from './images.js?v=20261116-unified2';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-unified2';
+import {readAutomation,renderAutomation} from './automation.js?v=20261116-unified2';
+import {selectDashboardView} from './dashboard.js?v=20261116-unified2';
+import config from './config.js?v=20261116-unified2';
+import {Cloud} from './api.js?v=20261116-unified2';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-unified2';
 const $=id=>document.getElementById(id);
 let remote,groupControls;
 let removedSources=[];
 let cloud,all=[],editing=null,busy=false;
 try{cloud=['127.0.0.1','localhost'].includes(location.hostname)?new LocalCloud():new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
-if(cloud){remote=new RemoteControl(cloud,$('remoteControl'));groupControls=new GroupSettings(cloud,$('groupSettingsPanel'),registry=>{removedSources=registry.removed||[];renderSourceOptions($('source'),all,removedSources);if(!document.activeElement?.matches('textarea,input'))render();});remote.onRegistry=registry=>groupControls.update(registry);setInterval(()=>remote.refresh(),5000);if(cloud.local){$('localShortcut').hidden=true;}}
+if(cloud){remote=new RemoteControl(cloud,$('remoteControl'));groupControls=new GroupSettings(cloud,$('groupSettingsPanel'),registry=>{removedSources=registry.removed||[];renderSourceOptions($('source'),all,removedSources);if(!document.activeElement?.matches('textarea,input'))render();});remote.onRegistry=registry=>groupControls.update(registry);setInterval(()=>remote.refresh(),5000);if(cloud.local){$('localShortcut').hidden=true;$('loginPanel').hidden=true;$('workspace').hidden=false;}}
 function showLogin(){all=[];$('rows').replaceChildren();$('workspace').hidden=true;$('loginPanel').hidden=false;$('logout').hidden=true;}
 function node(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;}
 function original(row){const details=node('details',undefined,'original');const summary=node('summary','查看原文');const content=node('div',undefined,'original-content');const draw=()=>renderOriginal(content,row.original_text,{task:row.task,priority:row.priority,assigned_to:row.assigned_to,deadline:row.deadline.display,completed:row.completed,assignment:row.assignment});draw();let loading=false;details.addEventListener('toggle',async()=>{if(!details.open||!cloud.local||row.original_text||loading)return;loading=true;content.textContent='正在載入原文……';try{row.original_text=await cloud.original(row.todo_key);draw();}catch(error){content.textContent=error.message;}finally{loading=false;}});details.append(summary,content);return details;}
@@ -73,7 +73,7 @@ for(const id of ['source','priority','status','completion'])$(id).addEventListen
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session()){load();remote?.refresh();}setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261116-unified1';
+const BUILD='20261116-unified2';
 async function resumeHomeScreen(){
  if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
  try{

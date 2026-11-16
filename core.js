@@ -1,5 +1,5 @@
-import {REMOTE_KEYS} from './remote.js?v=20261116-unified1';
-import {sourceAllowed} from './originals.js?v=20261116-unified1';
+import {REMOTE_KEYS} from './remote.js?v=20261116-unified2';
+import {sourceAllowed} from './originals.js?v=20261116-unified2';
 export function validateConfig(config){
  const url=String(config.supabaseUrl||'').replace(/\/$/,'');
  const key=String(config.publishableKey||'');
