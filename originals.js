@@ -17,7 +17,7 @@ export function renderOriginal(container,value,control={}){
   const box=el('section',undefined,'original-image');box.append(el('h4',`圖片 · ${image.sent_at||''} · ${image.sender||p.sender||''}`));
   if(/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(image.thumbnail||'')&&image.thumbnail.length<160000){const img=el('img');img.src=image.thumbnail;img.alt='此管制事項的原始 LINE 圖片預覽';img.loading='lazy';box.append(img);}
   if(image.status==='reference'){box.append(el('p','參考圖片：依設定略過文字辨識與 AI 分析。','task-note'));}
-  else{const ocr=el('details');ocr.append(el('summary','圖片文字辨識原文'),el('pre',image.ocr_text||'尚待文字辨識','original-text'));box.append(ocr);}parts.push(box);
+  else{const ocr=el('details');ocr.append(el('summary','圖片文字辨識原文'),el('pre',image.ocr_text||(image.status==='success'?'未辨識到可讀文字':'尚待文字辨識'),'original-text'));box.append(ocr);}parts.push(box);
  }
  if(p.tasks?.length){const box=el('section',undefined,'original-related');box.append(el('h4',p.analysis_mode==='combined'?'圖文合併後的 AI 管制分析':'同段關聯管制紀錄（歷史分析）'));
   for(const task of p.tasks)box.append(el('p',`${task.priority} · ${task.task} · 分析期限：${task.due_at||'未明示'}`));

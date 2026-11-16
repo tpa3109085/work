@@ -1,5 +1,5 @@
-import {REMOTE_KEYS} from './remote.js?v=20261116-reference1';
-import {validateConfig} from './core.js?v=20261116-reference1';
+import {REMOTE_KEYS} from './remote.js?v=20261116-reference2';
+import {validateConfig} from './core.js?v=20261116-reference2';
 export class Cloud{
  constructor(config,storage=localStorage,fetcher=globalThis.fetch.bind(globalThis)){Object.assign(this,validateConfig(config));this.storage=storage;this.fetcher=fetcher;this.storageKey='messagecontrol-auth:'+this.url;this.refreshing=null;}
  session(){try{return JSON.parse(this.storage.getItem(this.storageKey)||'null');}catch{return null;}}
