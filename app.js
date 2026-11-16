@@ -1,15 +1,15 @@
-import {LocalCloud} from './local.js?v=20261116-unified2';
-import {GroupSettings,readRegistry} from './groups.js?v=20261116-unified2';
-import {RemoteControl} from './remote.js?v=20261116-unified2';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-unified2';
-import {renderOriginal} from './originals.js?v=20261116-unified2';
-import {readImages,renderImages} from './images.js?v=20261116-unified2';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-unified2';
-import {readAutomation,renderAutomation} from './automation.js?v=20261116-unified2';
-import {selectDashboardView} from './dashboard.js?v=20261116-unified2';
-import config from './config.js?v=20261116-unified2';
-import {Cloud} from './api.js?v=20261116-unified2';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-unified2';
+import {LocalCloud} from './local.js?v=20261116-unified3';
+import {GroupSettings,readRegistry} from './groups.js?v=20261116-unified3';
+import {RemoteControl} from './remote.js?v=20261116-unified3';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-unified3';
+import {renderOriginal} from './originals.js?v=20261116-unified3';
+import {readImages,renderImages} from './images.js?v=20261116-unified3';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-unified3';
+import {readAutomation,renderAutomation} from './automation.js?v=20261116-unified3';
+import {selectDashboardView} from './dashboard.js?v=20261116-unified3';
+import config from './config.js?v=20261116-unified3';
+import {Cloud} from './api.js?v=20261116-unified3';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-unified3';
 const $=id=>document.getElementById(id);
 let remote,groupControls;
 let removedSources=[];
@@ -47,7 +47,7 @@ function render(){
 function selectDashboard(view){selectDashboardView(view,document,render);}
 async function load(){
  if(editing||document.querySelector('.original[open]')||document.activeElement?.matches('.assignment-editor'))return;
- try{const data=await cloud.data();all=mergeRows(data.todos,data.states);remote?.update(data.states);groupControls.update(data.registry||readRegistry(data.todos));renderSourceOptions($('source'),all,removedSources);renderImages(readImages(data.todos),$('imagesPanel'),cloud.local?{link:linkLocalImage}:{});renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=!!cloud.local;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
+ try{const data=await cloud.data();all=mergeRows(data.todos,data.states);if(!cloud.local)remote?.update(data.states);groupControls.update(data.registry||readRegistry(data.todos));renderSourceOptions($('source'),all,removedSources);renderImages(readImages(data.todos),$('imagesPanel'),cloud.local?{link:linkLocalImage}:{});renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=!!cloud.local;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
  catch(e){if(!cloud.session())showLogin();$('loginError').textContent=$('error').textContent=e.message;}
 }
 async function linkLocalImage(item){
@@ -73,7 +73,7 @@ for(const id of ['source','priority','status','completion'])$(id).addEventListen
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session()){load();remote?.refresh();}setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261116-unified2';
+const BUILD='20261116-unified3';
 async function resumeHomeScreen(){
  if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
  try{
