@@ -1,4 +1,4 @@
-import {sourceAllowed} from './originals.js?v=20261116-layout1';
+import {sourceAllowed} from './originals.js?v=20261116-open1';
 export function validateConfig(config){
  const url=String(config.supabaseUrl||'').replace(/\/$/,'');
  const key=String(config.publishableKey||'');
