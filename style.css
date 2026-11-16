@@ -20,3 +20,9 @@ input:focus,select:focus{outline-color:#4aa7a4}
 @media(max-width:760px){.local-control{display:block}.button-link{margin-top:16px}}
 
 .remote-form{display:flex;gap:14px;align-items:end}.remote-form label{flex:1;margin:0}.remote-form input{width:100%;box-sizing:border-box}.remote-form button{min-height:44px;white-space:nowrap}.remote-connection{font-weight:700;color:#16656b}.remote-progress{line-height:1.7;overflow-wrap:anywhere}.remote-progress[data-status=failed],.remote-progress[data-status=rejected]{color:#ab2525}.remote-progress[data-status=success]{color:#17704e}@media(max-width:600px){.remote-form{flex-direction:column;align-items:stretch}.remote-form button{width:100%}}
+
+.group-settings summary{cursor:pointer;font-size:18px;font-weight:800}.group-grid{display:grid;gap:12px}.group-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px;border:1px solid #dce8ea;border-radius:12px}.group-row strong{flex:1;min-width:180px}.group-row label{display:flex;align-items:center;gap:6px;margin:0}.group-row input{width:auto}.group-remove{background:#fff2f2;border:1px solid #e4b9b9;color:#a62525}.group-message{color:#18666e}
+
+.connection-status{padding:10px 14px;border-radius:10px;background:#e5f4ec;color:#146142;font-size:14px}.connection-status[data-status=reconnecting]{background:#fff3d7;color:#805c13}
+
+[hidden]{display:none!important}.remote-control,.group-settings{margin-bottom:20px}

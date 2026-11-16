@@ -36,8 +36,18 @@ test('parallel expired reads share one token refresh',async()=>{
  await Promise.all([cloud.data(),cloud.data()]);assert.equal(refreshes,1);
 });
 test('401 clears session, and deadline reset retains the explicit analysis mode',async()=>{
- let sent;const cloud=new Cloud(config,store(),async(url,options)=>{sent=JSON.parse(options.body);return response({message:'expired'},401);});
+ const sent=[];const cloud=new Cloud(config,store(),async(url,options)=>{sent.push(JSON.parse(options.body));return response({message:'expired'},401);});
  cloud.store({access_token:'a',refresh_token:'r',expires_in:3600});
  await assert.rejects(cloud.setDeadline('key','analysis'),/登入已失效/);
- assert.deepEqual(sent,{p_key:'key',p_mode:'analysis',p_date:null,p_time:null});assert.equal(cloud.session(),null);
+ assert.deepEqual(sent[0],{p_key:'key',p_mode:'analysis',p_date:null,p_time:null});assert.equal(cloud.session(),null);
+});
+
+test('temporary network failure during token renewal retains the login for reconnect',async()=>{
+ const cloud=new Cloud(config,store(),async()=>{throw new TypeError('offline');});cloud.store({access_token:'a',refresh_token:'r',expires_in:0});
+ await assert.rejects(cloud.refresh(),/offline/);assert.equal(cloud.session().refresh_token,'r');
+});
+test('expired server access is refreshed once before retrying the original request',async()=>{
+ let attempts=0,refreshes=0;
+ const cloud=new Cloud(config,store(),async(url)=>{if(url.includes('grant_type=refresh_token')){refreshes++;return response({access_token:'new',refresh_token:'next',expires_in:3600});}attempts++;return attempts===1?response({message:'expired'},401):response([]);});
+ cloud.store({access_token:'a',refresh_token:'r',expires_in:3600});assert.deepEqual(await cloud.request('/rest/v1/example'),[]);assert.equal(refreshes,1);assert.equal(attempts,2);
 });

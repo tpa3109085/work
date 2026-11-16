@@ -1,4 +1,4 @@
-export const REMOTE_KEYS={"request": "a6d53352a372eec9d689ce04fd0be6df305ada0214245cf3a2a535b52097d625", "response": "dd17f71beb2aa8a465bec86e506d48aee500758d7cef28a575e1935947770d39", "host": "2be69bed40f0b882057ce5b6bf1b27c601a02749436588bd94b08730bf3a4929"};
+export const REMOTE_KEYS={"request": "a6d53352a372eec9d689ce04fd0be6df305ada0214245cf3a2a535b52097d625", "response": "dd17f71beb2aa8a465bec86e506d48aee500758d7cef28a575e1935947770d39", "host": "2be69bed40f0b882057ce5b6bf1b27c601a02749436588bd94b08730bf3a4929", "registry": "2a19c9a49803824ad8541487e6639f1e650f39cce701d811ab5b476d2ec4d551", "settings_request": "b7c3a7a145165ee7a3d17d31023e18043cd6d34087a0b4ebaced0f78f0246f02", "settings_response": "492bf00dbb1651dafcffc6cbfa9087a501bb8a83143a6c27c2c7fa284a43261b"};
 export const REMOTE_KIND='mc_remote_line_v1';
 const ACTIVE=new Set(['queued','exporting','importing','analyzing']);
 export function remoteRecord(states,key){try{const row=states.find(x=>x.todo_key===key);const value=JSON.parse(row?.assignment_status||'null');return value?.kind===REMOTE_KIND?{...value,serverUpdatedAt:row.assignment_updated_at}:null;}catch{return null;}}
@@ -8,13 +8,13 @@ export class RemoteControl{
  constructor(cloud,panel){this.cloud=cloud;this.panel=panel;this.form=panel.querySelector('form');this.button=panel.querySelector('button[type=submit]');this.input=panel.querySelector('input');this.connection=panel.querySelector('.remote-connection');this.progress=panel.querySelector('.remote-progress');this.storageKey='mc-remote-last:'+cloud.url;this.pending=false;this.polling=false;this.form.addEventListener('submit',event=>{event.preventDefault();this.submit();});}
  async refresh(){
   if(this.polling||!this.cloud.session())return;this.polling=true;
-  try{const states=await this.cloud.request('/rest/v1/mc_cloud_state?todo_key=in.('+Object.values(REMOTE_KEYS).join(',')+')&select=todo_key,assignment_status,assignment_updated_at');this.update(states);}
-  catch(error){this.connection.textContent='無法確認本機連線：'+error.message;this.button.disabled=true;}
+  try{const {states,registry,connection}=await this.cloud.control();this.update(states);this.onRegistry?.(registry);const status=document.getElementById('connectionStatus');if(status){const good=this.cloud.local?connection?.status==='connected'&&Date.now()-new Date(connection.at).getTime()<90000:onlineHost(this.host);status.textContent=good?'Supabase 同步連線正常 · 自動續期與重連已啟用':'Supabase 正在等待本機連線或重新連線；既有資料保留';status.dataset.status=good?'connected':'reconnecting';}}
+  catch(error){this.connection.textContent='無法確認本機連線：'+error.message;this.button.disabled=true;const status=document.getElementById('connectionStatus');if(status){status.textContent='連線暫時中斷，保留登入並自動重試';status.dataset.status='reconnecting';}}
   finally{this.polling=false;}
  }
  update(states){
   const host=remoteRecord(states,REMOTE_KEYS.host),response=remoteRecord(states,REMOTE_KEYS.response),request=remoteRecord(states,REMOTE_KEYS.request);this.host=host;
-  const online=onlineHost(host);this.connection.textContent=online?(host.status==='busy'?'本機正在執行 LINE 任務':'本機已連線，可接收任務'):'本機未連線：請開啟電腦及 MessageControl 雲端同步。';
+  const online=onlineHost(host);this.connection.textContent=this.cloud.local?'本機直接連線，可立即操作':online?(host.status==='busy'?'本機正在執行 LINE 任務':'本機已連線，可接收任務'):'本機未連線：請開啟電腦及 MessageControl 雲端同步。';
   const waiting=request&&Date.now()-new Date(request.serverUpdatedAt).getTime()<600000&&!(response?.request_id===request.id&&!ACTIVE.has(response.status));
   this.button.disabled=!online||host?.status==='busy'||!!waiting||this.pending;
   const last=this.cloud.storage.getItem(this.storageKey);

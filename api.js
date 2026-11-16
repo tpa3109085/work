@@ -1,24 +1,32 @@
-import {validateConfig} from './core.js?v=20261116-remote1';
+import {REMOTE_KEYS} from './remote.js?v=20261116-unified1';
+import {validateConfig} from './core.js?v=20261116-unified1';
 export class Cloud{
  constructor(config,storage=localStorage,fetcher=globalThis.fetch.bind(globalThis)){Object.assign(this,validateConfig(config));this.storage=storage;this.fetcher=fetcher;this.storageKey='messagecontrol-auth:'+this.url;this.refreshing=null;}
  session(){try{return JSON.parse(this.storage.getItem(this.storageKey)||'null');}catch{return null;}}
  store(session){this.storage.setItem(this.storageKey,JSON.stringify({...session,expires_at:Date.now()+session.expires_in*1000}));}
  clear(){this.storage.removeItem(this.storageKey);}
- async request(path,{method='GET',body,auth=true}={}){
+ async request(path,{method='GET',body,auth=true,retried=false}={}){
   let session=this.session();
   if(auth&&session&&session.expires_at<Date.now()+30000){await this.refresh();session=this.session();}
   if(auth&&!session)throw Error('請先登入');
   const response=await this.fetcher(this.url+path,{method,headers:{apikey:this.key,...(auth?{Authorization:'Bearer '+session.access_token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
   const text=await response.text();let result;try{result=text?JSON.parse(text):null;}catch{throw Error('資料服務回覆格式不正確');}
-  if(!response.ok){if(response.status===401&&auth)this.clear();throw Error(response.status===401?'登入已失效，請重新登入':result?.msg||result?.message||result?.error_description||'資料服務暫時無法使用');}
+  if(!response.ok){if(response.status===401&&auth&&!retried){await this.refresh();return this.request(path,{method,body,auth,retried:true});}if(response.status===401&&auth)this.clear();const error=Error(response.status===401?'登入已失效，請重新登入':result?.msg||result?.message||result?.error_description||'資料服務暫時無法使用');error.status=response.status;throw error;}
   return result;
  }
  async login(email,password){const session=await this.request('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password},auth:false});this.store(session);return session;}
  async refresh(){
   if(this.refreshing)return this.refreshing;
   const session=this.session();if(!session)throw Error('請先登入');
-  this.refreshing=this.request('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:session.refresh_token},auth:false}).then(s=>this.store(s)).catch(e=>{this.clear();throw e;}).finally(()=>{this.refreshing=null;});return this.refreshing;
+  const perform=async()=>{
+   const current=this.session();
+   if(current?.access_token!==session.access_token&&current?.expires_at>Date.now()+30000)return;
+   try{const next=await this.request('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:current?.refresh_token||session.refresh_token},auth:false});this.store(next);}
+   catch(error){if([400,401].includes(error.status))this.clear();throw error;}
+  };
+  this.refreshing=(globalThis.navigator?.locks?globalThis.navigator.locks.request('mc-auth-refresh:'+this.url,perform):perform()).finally(()=>{this.refreshing=null;});return this.refreshing;
  }
+ async control(){const [states,rows]=await Promise.all([this.request('/rest/v1/mc_cloud_state?todo_key=in.('+Object.values(REMOTE_KEYS).join(',')+')&select=todo_key,assignment_status,assignment_updated_at'),this.request('/rest/v1/mc_cloud_todos?todo_key=eq.'+REMOTE_KEYS.registry+'&select=original_text')]);let registry={groups:[],removed:[]};try{const value=JSON.parse(rows[0]?.original_text||'null');if(value?.kind==='mc_remote_line_v1')registry=value;}catch{}return {states,registry};}
  async logout(){try{await this.request('/auth/v1/logout',{method:'POST'});}finally{this.clear();}}
  async data(){
   const rows=[];let offset=0;

@@ -1,21 +1,24 @@
-import {RemoteControl} from './remote.js?v=20261116-remote1';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-remote1';
-import {renderOriginal} from './originals.js?v=20261116-remote1';
-import {readImages,renderImages} from './images.js?v=20261116-remote1';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-remote1';
-import {readAutomation,renderAutomation} from './automation.js?v=20261116-remote1';
-import {selectDashboardView} from './dashboard.js?v=20261116-remote1';
-import config from './config.js?v=20261116-remote1';
-import {Cloud} from './api.js?v=20261116-remote1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-remote1';
+import {LocalCloud} from './local.js?v=20261116-unified1';
+import {GroupSettings,readRegistry} from './groups.js?v=20261116-unified1';
+import {RemoteControl} from './remote.js?v=20261116-unified1';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-unified1';
+import {renderOriginal} from './originals.js?v=20261116-unified1';
+import {readImages,renderImages} from './images.js?v=20261116-unified1';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-unified1';
+import {readAutomation,renderAutomation} from './automation.js?v=20261116-unified1';
+import {selectDashboardView} from './dashboard.js?v=20261116-unified1';
+import config from './config.js?v=20261116-unified1';
+import {Cloud} from './api.js?v=20261116-unified1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-unified1';
 const $=id=>document.getElementById(id);
-let remote;
+let remote,groupControls;
+let removedSources=[];
 let cloud,all=[],editing=null,busy=false;
-try{cloud=new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
-if(cloud){remote=new RemoteControl(cloud,$('remoteControl'));setInterval(()=>remote.refresh(),5000);}
+try{cloud=['127.0.0.1','localhost'].includes(location.hostname)?new LocalCloud():new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
+if(cloud){remote=new RemoteControl(cloud,$('remoteControl'));groupControls=new GroupSettings(cloud,$('groupSettingsPanel'),registry=>{removedSources=registry.removed||[];renderSourceOptions($('source'),all,removedSources);if(!document.activeElement?.matches('textarea,input'))render();});remote.onRegistry=registry=>groupControls.update(registry);setInterval(()=>remote.refresh(),5000);if(cloud.local){$('localShortcut').hidden=true;}}
 function showLogin(){all=[];$('rows').replaceChildren();$('workspace').hidden=true;$('loginPanel').hidden=false;$('logout').hidden=true;}
 function node(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;}
-function original(row){const details=node('details',undefined,'original');const summary=node('summary','查看原文');const content=node('div',undefined,'original-content');renderOriginal(content,row.original_text,{task:row.task,priority:row.priority,assigned_to:row.assigned_to,deadline:row.deadline.display,completed:row.completed,assignment:row.assignment});details.append(summary,content);return details;}
+function original(row){const details=node('details',undefined,'original');const summary=node('summary','查看原文');const content=node('div',undefined,'original-content');const draw=()=>renderOriginal(content,row.original_text,{task:row.task,priority:row.priority,assigned_to:row.assigned_to,deadline:row.deadline.display,completed:row.completed,assignment:row.assignment});draw();let loading=false;details.addEventListener('toggle',async()=>{if(!details.open||!cloud.local||row.original_text||loading)return;loading=true;content.textContent='正在載入原文……';try{row.original_text=await cloud.original(row.todo_key);draw();}catch(error){content.textContent=error.message;}finally{loading=false;}});details.append(summary,content);return details;}
 function assignment(row){
  const cell=node('td',undefined,'assignment');const editor=node('textarea',row.assignment,'assignment-editor');editor.maxLength=2000;editor.setAttribute('aria-label','交辦情形');editor.placeholder='例如：已交辦、追蹤中、待回覆';
  const save=node('button','保存','secondary small');save.addEventListener('click',async()=>{const value=editor.value.trim();save.disabled=true;try{await cloud.setAssignment(row.todo_key,value);await load();}catch(e){$('error').textContent=e.message;}finally{save.disabled=false;}});
@@ -43,9 +46,17 @@ function render(){
 }
 function selectDashboard(view){selectDashboardView(view,document,render);}
 async function load(){
- if(editing||document.querySelector('.original[open]'))return;
- try{const data=await cloud.data();all=mergeRows(data.todos,data.states);remote?.update(data.states);renderSourceOptions($('source'),all);renderImages(readImages(data.todos),$('imagesPanel'));renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
+ if(editing||document.querySelector('.original[open]')||document.activeElement?.matches('.assignment-editor'))return;
+ try{const data=await cloud.data();all=mergeRows(data.todos,data.states);remote?.update(data.states);groupControls.update(data.registry||readRegistry(data.todos));renderSourceOptions($('source'),all,removedSources);renderImages(readImages(data.todos),$('imagesPanel'),cloud.local?{link:linkLocalImage}:{});renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=!!cloud.local;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
  catch(e){if(!cloud.session())showLogin();$('loginError').textContent=$('error').textContent=e.message;}
+}
+async function linkLocalImage(item){
+ if(item.status==='pending'){await cloud.get('/api/image-link',{key:item.image_key,retry:true});return;}
+ const data=await cloud.get('/api/image-messages?group='+encodeURIComponent(item.group_name));
+ const choices=data.messages.slice(0,20).map(row=>row.id+' · '+row.sent_at+' · '+row.sender).join('\n');
+ const answer=prompt('請輸入圖片所屬的消息 ID；取消可保留原狀。\n'+choices);if(answer===null)return;
+ const id=Number(answer);if(!data.messages.some(row=>row.id===id))throw Error('請選擇此群組的有效圖片消息 ID');
+ await cloud.get('/api/image-link',{key:item.image_key,message_id:id});
 }
 function openDeadline(row){editing=row;$('deadlineTask').textContent=row.task;$('analysisDeadline').textContent='分析期限：'+deadline(row).display;$('deadlineDate').value=row.deadline.day;$('deadlineTime').value=row.deadline.clock;$('deadlineError').textContent='';$('deadlineDialog').showModal();}
 async function saveDeadline(mode,clear=false){
@@ -61,8 +72,8 @@ $('refresh').addEventListener('click',load);
 for(const id of ['source','priority','status','completion'])$(id).addEventListener('change',render);$('search').addEventListener('input',render);
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
-if(cloud?.session())load();setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261116-remote1';
+if(cloud?.session()){load();remote?.refresh();}setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
+const BUILD='20261116-unified1';
 async function resumeHomeScreen(){
  if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
  try{
@@ -77,3 +88,5 @@ async function resumeHomeScreen(){
 }
 window.addEventListener('pageshow',resumeHomeScreen);
 document.addEventListener('visibilitychange',resumeHomeScreen);
+
+window.addEventListener('online',()=>{remote?.refresh();if(cloud?.session())load();});
