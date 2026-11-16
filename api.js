@@ -1,4 +1,4 @@
-import {validateConfig} from './core.js?v=20261112-status1';
+import {validateConfig} from './core.js?v=20261116-images1';
 export class Cloud{
  constructor(config,storage=localStorage,fetcher=globalThis.fetch.bind(globalThis)){Object.assign(this,validateConfig(config));this.storage=storage;this.fetcher=fetcher;this.storageKey='messagecontrol-auth:'+this.url;this.refreshing=null;}
  session(){try{return JSON.parse(this.storage.getItem(this.storageKey)||'null');}catch{return null;}}
@@ -22,7 +22,8 @@ export class Cloud{
  async logout(){try{await this.request('/auth/v1/logout',{method:'POST'});}finally{this.clear();}}
  async data(){
   const rows=[];let offset=0;
-  for(;;){const batch=await this.request('/rest/v1/mc_cloud_todos?select=*&order=todo_key&limit=500&offset='+offset);rows.push(...batch);if(batch.length<500)break;offset+=500;}
+  for(;;){const batch=await this.request('/rest/v1/mc_cloud_todos?select=*&subject=neq.'+encodeURIComponent('MessageControl 圖片來源 v1')+'&order=todo_key&limit=500&offset='+offset);rows.push(...batch);if(batch.length<500)break;offset+=500;}
+  const images=await this.request('/rest/v1/mc_cloud_todos?select=*&subject=eq.'+encodeURIComponent('MessageControl 圖片來源 v1')+'&order=synced_at.desc&limit=100');rows.push(...images);
   const states=[];offset=0;for(;;){const batch=await this.request('/rest/v1/mc_cloud_state?select=*&order=todo_key&limit=500&offset='+offset);states.push(...batch);if(batch.length<500)break;offset+=500;}
   return {todos:rows,states};
  }

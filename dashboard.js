@@ -2,12 +2,12 @@ export function selectDashboardView(view,doc,render){
  const get=id=>doc.getElementById(id);
  for(const id of ['search','source','priority','status'])if(get(id))get(id).value='';
  if(get('completion'))get('completion').value=view==='done'?'done':view==='all'?'':'pending';
- if(get('status'))get('status').value=view==='today'?'今天到期':view==='overdue'?'已逾期':'';
+ if(get('status'))get('status').value=view==='today'?'今天到期':view==='overdue'?'已逾期':view==='tomorrow'?'明日到期':view==='next7'?'7日內到期':'';
  render();
- const labels={today:'今日待辦',overdue:'逾期未完成',pending:'未完成事項',done:'已完成事項',all:'全部事項'};
+ const labels={today:'今日待辦',overdue:'逾期未完成',pending:'未完成事項',done:'已完成事項',all:'全部事項',tomorrow:'明日到期',next7:'7 日內到期'};
  const title=get('taskListTitle');
  if(title)title.textContent=labels[view]||'待辦清單';
- doc.querySelectorAll('#stats .stat').forEach(card=>card.setAttribute('aria-pressed',String(card.dataset.view===view)));
+ doc.querySelectorAll('#stats .stat,#deadlineTracking .stat').forEach(card=>card.setAttribute('aria-pressed',String(card.dataset.view===view)));
  const target=title||get('resultCount')||get('rows');
  if(!target)return;
  // Older home-screen WebViews may reject the options argument.

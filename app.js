@@ -1,8 +1,10 @@
-import {readAutomation,renderAutomation} from './automation.js?v=20261112-status1';
-import {selectDashboardView} from './dashboard.js?v=20261112-status1';
-import config from './config.js?v=20261112-status1';
-import {Cloud} from './api.js?v=20261112-status1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261112-status1';
+import {readImages,renderImages} from './images.js?v=20261116-images1';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-images1';
+import {readAutomation,renderAutomation} from './automation.js?v=20261116-images1';
+import {selectDashboardView} from './dashboard.js?v=20261116-images1';
+import config from './config.js?v=20261116-images1';
+import {Cloud} from './api.js?v=20261116-images1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-images1';
 const $=id=>document.getElementById(id);
 let cloud,all=[],editing=null,busy=false;
 try{cloud=new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
@@ -17,11 +19,12 @@ function assignment(row){
 function render(){
  const pending=all.filter(x=>!x.completed),count=s=>pending.filter(x=>x.deadline.status===s).length;
  $('stats').replaceChildren(...[['今日待辦',count('今天到期'),'today','今日截止 · 優先處理'],['逾期未完成',count('已逾期'),'overdue','已超過期限 · 立即追蹤'],['未完成',pending.length,'pending','所有待處理事項'],['已完成',all.length-pending.length,'done','查看完成紀錄'],['待辦總數',all.length,'all','查看全部事項']].map(([label,value,view,hint])=>{const card=node('button',undefined,'stat stat-'+view);card.type='button';card.dataset.view=view;card.setAttribute('aria-pressed','false');card.append(node('span',label),node('strong',String(value)),node('small',hint+' ↗'));card.addEventListener('click',()=>selectDashboard(view));return card;}));
+ $('deadlineTracking').replaceChildren(...[['7 日內到期','next7'],['明日到期','tomorrow']].map(([label,view])=>{const card=node('button',undefined,'stat stat-'+view);card.type='button';card.dataset.view=view;card.append(node('span',label),node('strong',String(all.filter(x=>inDueWindow(x,view)).length)),node('small','點選查看相關事項 ↗'));card.addEventListener('click',()=>selectDashboard(view));return card;}));
  const urgent=pending.filter(x=>x.priority==='P1').length;
  $('reminders').hidden=!(urgent||count('已逾期')||count('今天到期'));
  $('reminders').textContent=`期限提醒：逾期未完成 ${count('已逾期')} 項 · 今天到期 ${count('今天到期')} 項 · P1 未完成 ${urgent} 項`;
  const query=$('search').value.toLowerCase().trim();
- const rows=all.filter(x=>(!$('source').value||x.source_type===$('source').value)&&(!$('priority').value||x.priority===$('priority').value)&&(!$('status').value||x.deadline.status===$('status').value)&&(!$('completion').value||(x.completed?$('completion').value==='done':$('completion').value==='pending'))&&(!query||[x.task,x.subject,x.assigned_to,x.assignment].join(' ').toLowerCase().includes(query)));
+ const rows=all.filter(x=>(!$('source').value||x.source_type===$('source').value)&&(!$('priority').value||x.priority===$('priority').value)&&matchesDueFilter(x,$('status').value)&&(!$('completion').value||(x.completed?$('completion').value==='done':$('completion').value==='pending'))&&(!query||[x.task,x.subject,x.assigned_to,x.assignment].join(' ').toLowerCase().includes(query)));
  $('resultCount').textContent=`顯示 ${rows.length} 項 · 共 ${all.length} 項待辦`;
  $('empty').hidden=!!rows.length;
  $('rows').replaceChildren(...rows.map(x=>{
@@ -36,7 +39,7 @@ function render(){
 function selectDashboard(view){selectDashboardView(view,document,render);}
 async function load(){
  if(editing)return;
- try{const data=await cloud.data();all=mergeRows(data.todos,data.states);renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
+ try{const data=await cloud.data();all=mergeRows(data.todos,data.states);renderImages(readImages(data.todos),$('imagesPanel'));renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
  catch(e){if(!cloud.session())showLogin();$('loginError').textContent=$('error').textContent=e.message;}
 }
 function openDeadline(row){editing=row;$('deadlineTask').textContent=row.task;$('analysisDeadline').textContent='分析期限：'+deadline(row).display;$('deadlineDate').value=row.deadline.day;$('deadlineTime').value=row.deadline.clock;$('deadlineError').textContent='';$('deadlineDialog').showModal();}
@@ -54,7 +57,7 @@ for(const id of ['source','priority','status','completion'])$(id).addEventListen
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session())load();setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261112-status1';
+const BUILD='20261116-images1';
 async function resumeHomeScreen(){
  if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
  try{
