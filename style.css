@@ -18,3 +18,5 @@ input:focus,select:focus{outline-color:#4aa7a4}
 .local-control .eyebrow{color:#247779}.button-link{display:inline-block;flex:none;padding:11px 16px;border-radius:9px;background:#176d80;color:white;text-decoration:none;font-weight:700}
 .button-link:hover,.button-link:focus-visible{background:#124b66}#resultCount{margin:4px 0 0}
 @media(max-width:760px){.local-control{display:block}.button-link{margin-top:16px}}
+
+.remote-form{display:flex;gap:14px;align-items:end}.remote-form label{flex:1;margin:0}.remote-form input{width:100%;box-sizing:border-box}.remote-form button{min-height:44px;white-space:nowrap}.remote-connection{font-weight:700;color:#16656b}.remote-progress{line-height:1.7;overflow-wrap:anywhere}.remote-progress[data-status=failed],.remote-progress[data-status=rejected]{color:#ab2525}.remote-progress[data-status=success]{color:#17704e}@media(max-width:600px){.remote-form{flex-direction:column;align-items:stretch}.remote-form button{width:100%}}

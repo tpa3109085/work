@@ -1,15 +1,18 @@
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-groups1';
-import {renderOriginal} from './originals.js?v=20261116-groups1';
-import {readImages,renderImages} from './images.js?v=20261116-groups1';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-groups1';
-import {readAutomation,renderAutomation} from './automation.js?v=20261116-groups1';
-import {selectDashboardView} from './dashboard.js?v=20261116-groups1';
-import config from './config.js?v=20261116-groups1';
-import {Cloud} from './api.js?v=20261116-groups1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-groups1';
+import {RemoteControl} from './remote.js?v=20261116-remote1';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-remote1';
+import {renderOriginal} from './originals.js?v=20261116-remote1';
+import {readImages,renderImages} from './images.js?v=20261116-remote1';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-remote1';
+import {readAutomation,renderAutomation} from './automation.js?v=20261116-remote1';
+import {selectDashboardView} from './dashboard.js?v=20261116-remote1';
+import config from './config.js?v=20261116-remote1';
+import {Cloud} from './api.js?v=20261116-remote1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-remote1';
 const $=id=>document.getElementById(id);
+let remote;
 let cloud,all=[],editing=null,busy=false;
 try{cloud=new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
+if(cloud){remote=new RemoteControl(cloud,$('remoteControl'));setInterval(()=>remote.refresh(),5000);}
 function showLogin(){all=[];$('rows').replaceChildren();$('workspace').hidden=true;$('loginPanel').hidden=false;$('logout').hidden=true;}
 function node(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;}
 function original(row){const details=node('details',undefined,'original');const summary=node('summary','查看原文');const content=node('div',undefined,'original-content');renderOriginal(content,row.original_text,{task:row.task,priority:row.priority,assigned_to:row.assigned_to,deadline:row.deadline.display,completed:row.completed,assignment:row.assignment});details.append(summary,content);return details;}
@@ -41,7 +44,7 @@ function render(){
 function selectDashboard(view){selectDashboardView(view,document,render);}
 async function load(){
  if(editing||document.querySelector('.original[open]'))return;
- try{const data=await cloud.data();all=mergeRows(data.todos,data.states);renderSourceOptions($('source'),all);renderImages(readImages(data.todos),$('imagesPanel'));renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
+ try{const data=await cloud.data();all=mergeRows(data.todos,data.states);remote?.update(data.states);renderSourceOptions($('source'),all);renderImages(readImages(data.todos),$('imagesPanel'));renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
  catch(e){if(!cloud.session())showLogin();$('loginError').textContent=$('error').textContent=e.message;}
 }
 function openDeadline(row){editing=row;$('deadlineTask').textContent=row.task;$('analysisDeadline').textContent='分析期限：'+deadline(row).display;$('deadlineDate').value=row.deadline.day;$('deadlineTime').value=row.deadline.clock;$('deadlineError').textContent='';$('deadlineDialog').showModal();}
@@ -59,7 +62,7 @@ for(const id of ['source','priority','status','completion'])$(id).addEventListen
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session())load();setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261116-groups1';
+const BUILD='20261116-remote1';
 async function resumeHomeScreen(){
  if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
  try{
