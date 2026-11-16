@@ -6,7 +6,7 @@ export function renderImages(images,panel,{link}={}){
  const openKeys=new Set([...panel.querySelectorAll('details[open][data-disclosure]')].map(x=>x.dataset.disclosure));
  const reveal=(details,key)=>{details.dataset.disclosure=key;details.open=openKeys.has(key);};
  const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
- const labels={success:'分析完成',pending:'待分析',ocr_ready:'等待圖文合併分析',error:'分析失敗',needs_link:'待配對消息時間',excluded:'不在分析範圍'};
+ const labels={success:'分析完成',pending:'待分析',ocr_ready:'等待圖文合併分析',error:'分析失敗',needs_link:'待配對消息時間',excluded:'不在分析範圍',reference:'參考圖片（已略過）'};
  const summary=el('summary',`LINE 圖片與辨識 · ${images.length} 張`);
  const hint=el('p','依 LINE 訊息時間分析；文字辨識可能有誤，請對照圖片核對期限。','task-note');
  const grid=el('div',undefined,'image-grid');
@@ -18,7 +18,8 @@ export function renderImages(images,panel,{link}={}){
   }
   card.append(el('strong',item.group_name),el('p',`${item.sent_at||'消息時間待配對'} · ${item.sender||'發送者待確認'}`,'task-note'),el('span',labels[item.status]||item.status,'badge'));
   if(item.error)card.append(el('p',item.error,'image-error'));
-  const ocr=el('details');reveal(ocr,item.image_key+':ocr');ocr.append(el('summary','文字辨識原文'),el('pre',item.ocr_text||'尚未辨識','original-text'));card.append(ocr);
+  if(item.status==='reference'){card.append(el('p','每日勤務編組／上班人力與車輛檢視表，依設定略過文字辨識及 AI 分析。','task-note'));}
+  else{const ocr=el('details');reveal(ocr,item.image_key+':ocr');ocr.append(el('summary','文字辨識原文'),el('pre',item.ocr_text||'尚未辨識','original-text'));card.append(ocr);}
   const result=el('div',undefined,'image-results');
   for(const task of item.tasks||[]){result.append(el('p',`${task.priority} · ${task.task}`),el('small',`承辦：${task.assigned_to||'待確認'} · 期限：${task.due_at||task.deadline_text||'未明示'}`));}
   if(item.status==='success'&&!item.tasks?.length)result.append(el('p','未辨識到需要後續處理的交辦'));

@@ -1,15 +1,15 @@
-import {LocalCloud} from './local.js?v=20261116-unified3';
-import {GroupSettings,readRegistry} from './groups.js?v=20261116-unified3';
-import {RemoteControl} from './remote.js?v=20261116-unified3';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-unified3';
-import {renderOriginal} from './originals.js?v=20261116-unified3';
-import {readImages,renderImages} from './images.js?v=20261116-unified3';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-unified3';
-import {readAutomation,renderAutomation} from './automation.js?v=20261116-unified3';
-import {selectDashboardView} from './dashboard.js?v=20261116-unified3';
-import config from './config.js?v=20261116-unified3';
-import {Cloud} from './api.js?v=20261116-unified3';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-unified3';
+import {LocalCloud} from './local.js?v=20261116-reference1';
+import {GroupSettings,readRegistry} from './groups.js?v=20261116-reference1';
+import {RemoteControl} from './remote.js?v=20261116-reference1';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261116-reference1';
+import {renderOriginal} from './originals.js?v=20261116-reference1';
+import {readImages,renderImages} from './images.js?v=20261116-reference1';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-reference1';
+import {readAutomation,renderAutomation} from './automation.js?v=20261116-reference1';
+import {selectDashboardView} from './dashboard.js?v=20261116-reference1';
+import config from './config.js?v=20261116-reference1';
+import {Cloud} from './api.js?v=20261116-reference1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-reference1';
 const $=id=>document.getElementById(id);
 let remote,groupControls;
 let removedSources=[];
@@ -73,7 +73,7 @@ for(const id of ['source','priority','status','completion'])$(id).addEventListen
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session()){load();remote?.refresh();}setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261116-unified3';
+const BUILD='20261116-reference1';
 async function resumeHomeScreen(){
  if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
  try{
