@@ -1,16 +1,17 @@
-import {readImages,renderImages} from './images.js?v=20261116-images1';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-images1';
-import {readAutomation,renderAutomation} from './automation.js?v=20261116-images1';
-import {selectDashboardView} from './dashboard.js?v=20261116-images1';
-import config from './config.js?v=20261116-images1';
-import {Cloud} from './api.js?v=20261116-images1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-images1';
+import {renderOriginal} from './originals.js?v=20261116-context1';
+import {readImages,renderImages} from './images.js?v=20261116-context1';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261116-context1';
+import {readAutomation,renderAutomation} from './automation.js?v=20261116-context1';
+import {selectDashboardView} from './dashboard.js?v=20261116-context1';
+import config from './config.js?v=20261116-context1';
+import {Cloud} from './api.js?v=20261116-context1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261116-context1';
 const $=id=>document.getElementById(id);
 let cloud,all=[],editing=null,busy=false;
 try{cloud=new Cloud(config);}catch{$('setup').hidden=false;$('loginButton').disabled=true;}
 function showLogin(){all=[];$('rows').replaceChildren();$('workspace').hidden=true;$('loginPanel').hidden=false;$('logout').hidden=true;}
 function node(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;}
-function original(row){const details=node('details',undefined,'original');const summary=node('summary','查看原文');const content=node('pre',row.original_text||'原文尚未同步','original-text');details.append(summary,content);return details;}
+function original(row){const details=node('details',undefined,'original');const summary=node('summary','查看原文');const content=node('div',undefined,'original-content');renderOriginal(content,row.original_text,{task:row.task,priority:row.priority,assigned_to:row.assigned_to,deadline:row.deadline.display,completed:row.completed,assignment:row.assignment});details.append(summary,content);return details;}
 function assignment(row){
  const cell=node('td',undefined,'assignment');const editor=node('textarea',row.assignment,'assignment-editor');editor.maxLength=2000;editor.setAttribute('aria-label','交辦情形');editor.placeholder='例如：已交辦、追蹤中、待回覆';
  const save=node('button','保存','secondary small');save.addEventListener('click',async()=>{const value=editor.value.trim();save.disabled=true;try{await cloud.setAssignment(row.todo_key,value);await load();}catch(e){$('error').textContent=e.message;}finally{save.disabled=false;}});
@@ -38,7 +39,7 @@ function render(){
 }
 function selectDashboard(view){selectDashboardView(view,document,render);}
 async function load(){
- if(editing)return;
+ if(editing||document.querySelector('.original[open]'))return;
  try{const data=await cloud.data();all=mergeRows(data.todos,data.states);renderImages(readImages(data.todos),$('imagesPanel'));renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
  catch(e){if(!cloud.session())showLogin();$('loginError').textContent=$('error').textContent=e.message;}
 }
@@ -57,7 +58,7 @@ for(const id of ['source','priority','status','completion'])$(id).addEventListen
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session())load();setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261116-images1';
+const BUILD='20261116-context1';
 async function resumeHomeScreen(){
  if(document.hidden||editing||document.activeElement?.matches('input,textarea'))return;
  try{

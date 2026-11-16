@@ -6,7 +6,7 @@ export function renderImages(images,panel,{link}={}){
  const openKeys=new Set([...panel.querySelectorAll('details[open][data-disclosure]')].map(x=>x.dataset.disclosure));
  const reveal=(details,key)=>{details.dataset.disclosure=key;details.open=openKeys.has(key);};
  const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
- const labels={success:'分析完成',pending:'待分析',error:'分析失敗',needs_link:'待配對消息時間',excluded:'不在分析範圍'};
+ const labels={success:'分析完成',pending:'待分析',ocr_ready:'等待圖文合併分析',error:'分析失敗',needs_link:'待配對消息時間',excluded:'不在分析範圍'};
  const summary=el('summary',`LINE 圖片與辨識 · ${images.length} 張`);
  const hint=el('p','依 LINE 訊息時間分析；文字辨識可能有誤，請對照圖片核對期限。','task-note');
  const grid=el('div',undefined,'image-grid');
