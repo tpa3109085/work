@@ -1,16 +1,16 @@
-import {LocalCloud} from './local.js?v=20261117-workspace1';
-import {GroupSettings,readRegistry} from './groups.js?v=20261117-workspace1';
-import {RemoteControl} from './remote.js?v=20261117-workspace1';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261117-workspace1';
-import {renderOriginal} from './originals.js?v=20261117-workspace1';
-import {readImages,renderImages} from './images.js?v=20261117-workspace1';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261117-workspace1';
-import {readAutomation,renderAutomation} from './automation.js?v=20261117-workspace1';
-import {selectDashboardView} from './dashboard.js?v=20261117-workspace1';
-import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261117-workspace1';
-import config from './config.js?v=20261117-workspace1';
-import {Cloud} from './api.js?v=20261117-workspace1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261117-workspace1';
+import {LocalCloud} from './local.js?v=20261117-images14d1';
+import {GroupSettings,readRegistry} from './groups.js?v=20261117-images14d1';
+import {RemoteControl} from './remote.js?v=20261117-images14d1';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261117-images14d1';
+import {renderOriginal} from './originals.js?v=20261117-images14d1';
+import {readImages,renderImages} from './images.js?v=20261117-images14d1';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261117-images14d1';
+import {readAutomation,renderAutomation} from './automation.js?v=20261117-images14d1';
+import {selectDashboardView} from './dashboard.js?v=20261117-images14d1';
+import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261117-images14d1';
+import config from './config.js?v=20261117-images14d1';
+import {Cloud} from './api.js?v=20261117-images14d1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261117-images14d1';
 const $=id=>document.getElementById(id);
 let remote,groupControls;
 let removedSources=[];
@@ -86,7 +86,7 @@ for(const id of ['source','priority','status','completion','sort'])$(id).addEven
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session()){load();remote?.refresh();}setInterval(()=>{if(cloud?.session()&&!editing)load();},30000);
-const BUILD='20261117-workspace1';
+const BUILD='20261117-images14d1';
 async function resumeHomeScreen(){
  if(document.hidden||editing||drafts.size||document.activeElement?.matches('input,textarea'))return;
  try{
