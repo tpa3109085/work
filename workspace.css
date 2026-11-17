@@ -1,0 +1,50 @@
+/* Compact daily overview, optional controls, and clear editing state. */
+main>header{padding:25px 30px;margin-bottom:18px}
+#workspace>.dashboard:first-child{margin-top:20px}
+.dashboard .stat{min-height:126px}
+.remote-control>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px;cursor:pointer;font-size:16px;font-weight:750;list-style:none}
+.remote-control>summary::-webkit-details-marker{display:none}
+.remote-control>summary::before{content:'＋';font-size:21px;color:#217e83}
+.remote-control[open]>summary::before{content:'−'}
+.remote-control>summary>span:first-child{flex:1}
+.remote-summary-hint{font-size:12px;color:#6a7d89;font-weight:400}
+.remote-control[open]>summary{border-bottom:1px solid #e3ecef;padding-bottom:14px;margin-bottom:16px}
+.remote-body h2{margin-top:8px}.remote-control:not([open]){padding-top:13px;padding-bottom:13px}
+.remote-control>summary:focus-visible{outline:3px solid #4aa7a4;outline-offset:5px;border-radius:6px}
+.toolbar #sort{max-width:160px}.filter-reset{border:1px solid #b7d5d8;background:#f0f8f8;color:#236772}
+.list-status{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+#filterSummary{font-size:12px;color:#5f7381}#resultCount{margin:0}
+.assignment-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.assignment-actions .small{display:inline-block;margin-top:0;min-height:34px}
+.assignment-status{font-size:11px;line-height:1.6;color:#6b808b;display:block;margin-top:7px;min-height:18px}
+.assignment-status[data-state=dirty]{color:#91640d}.assignment-status[data-state=conflict],.assignment-status[data-state=error]{color:#b32d40}
+.assignment-editor[data-dirty=true]{border-color:#d0a346;background:#fffdf6}
+.assignment-editor:disabled{background:#f2f5f7}
+.task-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
+.save-notice{font-size:13px;color:#146c57;min-height:20px;margin:8px 0 0}
+button:focus-visible,summary:focus-visible{outline:3px solid #258d99;outline-offset:3px}
+@media(min-width:1000px){.toolbar{position:sticky;top:8px;z-index:3;background:#fff;padding:9px 0}.task-list-panel{overflow:visible}.toolbar input{min-width:220px}td.owner{max-width:160px;overflow-wrap:anywhere}}
+@media(max-width:760px){
+ main{padding:16px 12px}main>header{padding:20px 18px;border-radius:18px;margin-bottom:14px}
+ main>header h1{font-size:26px}.sub{font-size:13px;line-height:1.6}
+ .connection-status{font-size:12px;margin:12px 0;padding:9px 11px}
+ .dashboard{margin:20px 0 16px}.dashboard h2{font-size:21px;margin-bottom:12px}
+ .stats{gap:10px}.dashboard .stat{min-height:106px;padding:13px}.stat strong{font-size:29px;margin:6px 0}
+ .stat small{font-size:10px;line-height:1.5}.stat-all{grid-column:1/-1;min-height:80px!important;display:grid;grid-template-columns:1fr auto;align-items:center}
+ .stat-all strong{grid-column:2;grid-row:1/3}.stat-all small{grid-column:1}.tracking-grid .stat{min-height:96px}
+ .deadline-tracking>.muted{font-size:11px;line-height:1.6}
+ .remote-summary-hint{display:none}.remote-control>summary{font-size:14px}
+ .toolbar{gap:8px}.toolbar input{width:100%;min-width:0;flex-basis:100%}
+ .toolbar select{flex:1 1 calc(50% - 8px);min-width:0;max-width:none!important;font-size:13px}
+ .toolbar button{flex:1;min-height:42px}.task-list-panel{padding:14px}
+ .table-wrap{overflow:visible}table{margin-top:10px}tbody tr{border:1px solid #dce7eb;border-radius:13px;background:#fff;box-shadow:0 4px 14px #163c5606;margin:12px 0;padding:14px}
+ tr.overdue-row{background:#fff3f5;border-left:4px solid #be123c}tr.today-row{background:#fffaf0;border-left:4px solid #dc9b27}
+ tr.done{background:#f6f8f9}td.priority{font-size:12px}td.task{padding-top:2px}td.owner:before{content:'承辦人　';font-size:11px;color:#71838f}
+ td.assignment,td.deadline-cell{min-width:0;padding-top:12px}
+ td.assignment:before,td.deadline-cell:before{display:block;color:#71838f;font-size:11px;margin-bottom:6px}
+ td.assignment:before{content:'交辦情形'}td.deadline-cell:before{content:'期限'}
+ .assignment-editor{min-height:64px}.assignment-actions .small{min-height:38px;padding:7px 12px}
+ .deadline-cell .small{min-height:36px}.check{width:23px;height:23px}
+ .list-status{gap:5px}.empty{padding:24px 8px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.stat{transition:none}.stat:hover:not(:disabled){transform:none}}
