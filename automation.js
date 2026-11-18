@@ -4,12 +4,13 @@ export function readAutomation(states){
 }
 export function renderAutomation(report,panel){
  if(!panel)return;
- const labels={success:'成功',failed:'失敗',partial:'部分失敗',running:'執行中',unknown:'尚無紀錄'};
+ const labels={success:'成功',failed:'失敗',partial:'部分失敗',review:'待核對',running:'執行中',unknown:'尚無紀錄'};
  const make=(tag,text,cls)=>{const e=document.createElement(tag);e.textContent=text;if(cls)e.className=cls;return e;};
  const summary=panel.querySelector('summary'),body=panel.querySelector('.automation-body');body.replaceChildren();
- const items=Array.isArray(report?.items)?report.items.slice(0,5):[];
+ const items=Array.isArray(report?.items)?report.items.slice(0,10):[];
  const failures=items.filter(x=>['failed','partial'].includes(x.status)).length;
- summary.replaceChildren(make('span','自動化執行狀態'),make('span',!items.length?'尚未收到回報':failures?`${failures} 項需注意`:'查看最近執行結果',failures?'automation-alert':'automation-hint'));
+ const reviews=items.filter(x=>x.status==='review').length;
+ summary.replaceChildren(make('span','自動化執行狀態'),make('span',!items.length?'尚未收到回報':failures?`${failures} 項失敗需處理`:reviews?`${reviews} 項待核對`:'查看最近執行結果',failures?'automation-alert':reviews?'automation-review':'automation-hint'));
  const format=value=>{const d=new Date(value);return Number.isFinite(d.getTime())?d.toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false}):'尚無時間紀錄';};
  if(!items.length){body.append(make('p','尚未收到本機回報。請確認電腦已開機且雲端同步正在執行。','muted'));return;}
  const old=Date.now()-new Date(report.reported_at).getTime()>300000;
