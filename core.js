@@ -1,5 +1,5 @@
-import {REMOTE_KEYS} from './remote.js?v=20261119-mail-coverage1';
-import {sourceAllowed} from './originals.js?v=20261119-mail-coverage1';
+import {REMOTE_KEYS} from './remote.js?v=20261120-egress1';
+import {sourceAllowed} from './originals.js?v=20261120-egress1';
 export function validateConfig(config){
  const url=String(config.supabaseUrl||'').replace(/\/$/,'');
  const key=String(config.publishableKey||'');

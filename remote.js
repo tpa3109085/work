@@ -6,16 +6,20 @@ export function onlineHost(host,now=Date.now()){const age=now-new Date(host?.ser
 export function validateRemoteGroup(value){const group=String(value||'').trim();if(!group||group.length>100||/[\\/:*?"<>|\x00-\x1f]/.test(group)||['.','..'].includes(group))throw Error('請輸入完整群組名稱（最多100字，不可包含路徑符號）');return group;}
 export class RemoteControl{
  constructor(cloud,panel){this.cloud=cloud;this.panel=panel;this.form=panel.querySelector('form');this.button=panel.querySelector('button[type=submit]');this.input=panel.querySelector('input');this.connection=panel.querySelector('.remote-connection');this.progress=panel.querySelector('.remote-progress');this.storageKey='mc-remote-last:'+cloud.url;this.pending=false;this.polling=false;this.form.addEventListener('submit',event=>{event.preventDefault();this.submit();});}
- async refresh(){
-  if(this.polling||!this.cloud.session())return;this.polling=true;
-  try{const {states,registry,connection}=await this.cloud.control();this.update(states);this.onRegistry?.(registry);const status=document.getElementById('connectionStatus');if(status){const good=this.cloud.local?connection?.status==='connected'&&Date.now()-new Date(connection.at).getTime()<90000:onlineHost(this.host);status.textContent=good?'Supabase 同步連線正常 · 自動續期與重連已啟用':'Supabase 正在等待本機連線或重新連線；既有資料保留';status.dataset.status=good?'connected':'reconnecting';}}
-  catch(error){this.connection.textContent='無法確認本機連線：'+error.message;this.button.disabled=true;const status=document.getElementById('connectionStatus');if(status){status.textContent='連線暫時中斷，保留登入並自動重試';status.dataset.status='reconnecting';}}
+ async refresh({force=false}={}){
+  const scope=this.cloud.local?'local':this.cloud.session()?.user?.id||'session';
+  if(this.scope!==scope){this.scope=scope;this.host=null;this.lastPoll=0;this.lastFailure=0;this.activeRequest=false;this.progress.textContent='';this.button.disabled=true;}
+  const interval=this.lastFailure?30000:this.host?.status==='busy'||this.pending||this.activeRequest?5000:30000;
+  if(this.polling||!this.cloud.session()||(!force&&Date.now()-(this.lastPoll||0)<interval))return;this.polling=true;this.lastPoll=Date.now();
+  try{const {states,registry,connection}=await this.cloud.control();this.lastFailure=0;this.update(states);this.onRegistry?.(registry);const status=document.getElementById('connectionStatus');if(status){const good=this.cloud.local?connection?.status==='connected'&&Date.now()-new Date(connection.at).getTime()<90000:onlineHost(this.host);status.textContent=good?'Supabase 同步連線正常 · 自動續期與重連已啟用':'Supabase 正在等待本機連線或重新連線；既有資料保留';status.dataset.status=good?'connected':'reconnecting';}}
+  catch(error){this.lastFailure=Date.now();this.connection.textContent='無法確認本機連線：'+error.message;this.button.disabled=true;const status=document.getElementById('connectionStatus');if(status){status.textContent='連線暫時中斷，保留登入並自動重試';status.dataset.status='reconnecting';}}
   finally{this.polling=false;}
  }
  update(states){
   const host=remoteRecord(states,REMOTE_KEYS.host),response=remoteRecord(states,REMOTE_KEYS.response),request=remoteRecord(states,REMOTE_KEYS.request);this.host=host;
   const online=onlineHost(host);this.connection.textContent=this.cloud.local?'本機直接連線，可立即操作':online?(host.status==='busy'?'本機正在執行 LINE 任務':'本機已連線，可接收任務'):'本機未連線：請開啟電腦及 MessageControl 雲端同步。';
   const waiting=request&&Date.now()-new Date(request.serverUpdatedAt).getTime()<600000&&!(response?.request_id===request.id&&!ACTIVE.has(response.status));
+  this.activeRequest=!!waiting;
   this.button.disabled=!online||host?.status==='busy'||!!waiting||this.pending;
   const last=this.cloud.storage.getItem(this.storageKey);
   if(response&&(!last||response.request_id===last)){
@@ -36,6 +40,6 @@ export class RemoteControl{
    await this.cloud.setAssignment(REMOTE_KEYS.request,JSON.stringify({kind:REMOTE_KIND,id,device:host.device,command:'export_analyze',group}));
    this.cloud.storage.setItem(this.storageKey,id);this.progress.textContent='任務已送出，等待本機接收……';this.progress.dataset.status='queued';
   }catch(error){this.progress.textContent='無法開始：'+error.message;this.progress.dataset.status='failed';}
-  finally{this.pending=false;await this.refresh();}
+  finally{this.pending=false;await this.refresh({force:true});}
  }
 }

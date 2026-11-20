@@ -1,9 +1,10 @@
+export const HIDDEN_SOURCE_NOTE='已併入同人10分鐘圖文待辦或依名單排除';
 export function sourcePayload(value){
  if(value&&typeof value==='object')return value;
  try{const p=JSON.parse(value);if(p?.kind==='mc_line_context_v1')return p;}catch{}
  return {text:typeof value==='string'?value:'原文尚未同步',images:[],tasks:[]};
 }
-export function sourceAllowed(row){return row.source_type!=='LINE'||sourcePayload(row.original_text).eligible!==false;}
+export function sourceAllowed(row){return row.analysis_note!==HIDDEN_SOURCE_NOTE&&(row.source_type!=='LINE'||sourcePayload(row.original_text).eligible!==false);}
 export function renderOriginal(container,value,control={}){
  const p=sourcePayload(value),el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
  const parts=[];
