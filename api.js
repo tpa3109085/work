@@ -1,6 +1,6 @@
-import {REMOTE_KEYS} from './remote.js?v=20261120-egress1';
-import {validateConfig} from './core.js?v=20261120-egress1';
-import {HIDDEN_SOURCE_NOTE} from './originals.js?v=20261120-egress1';
+import {REMOTE_KEYS} from './remote.js?v=20261123-flow2';
+import {validateConfig} from './core.js?v=20261123-flow2';
+import {HIDDEN_SOURCE_NOTE} from './originals.js?v=20261123-flow2';
 const IMAGE_SUBJECT='MessageControl 圖片來源 v1';
 const TODO_FIELDS='todo_key,task,subject,source_type,assigned_to,priority,analysis_date,analysis_time,analysis_note,source_completed,synced_at';
 const STATE_FIELDS='todo_key,completed,completed_updated_at,deadline_mode,manual_date,manual_time,deadline_updated_at,assignment_status,assignment_updated_at';

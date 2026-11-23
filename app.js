@@ -1,16 +1,16 @@
-import {LocalCloud} from './local.js?v=20261120-egress1';
-import {GroupSettings,readRegistry} from './groups.js?v=20261120-egress1';
-import {RemoteControl} from './remote.js?v=20261120-egress1';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261120-egress1';
-import {renderOriginal} from './originals.js?v=20261120-egress1';
-import {readImages,renderImages} from './images.js?v=20261120-egress1';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261120-egress1';
-import {readAutomation,renderAutomation} from './automation.js?v=20261120-egress1';
-import {selectDashboardView} from './dashboard.js?v=20261120-egress1';
-import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261120-egress1';
-import config from './config.js?v=20261120-egress1';
-import {Cloud} from './api.js?v=20261120-egress1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261120-egress1';
+import {LocalCloud} from './local.js?v=20261123-flow2';
+import {GroupSettings,readRegistry} from './groups.js?v=20261123-flow2';
+import {RemoteControl} from './remote.js?v=20261123-flow2';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261123-flow2';
+import {renderOriginal} from './originals.js?v=20261123-flow2';
+import {readImages,renderImages} from './images.js?v=20261123-flow2';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261123-flow2';
+import {readAutomation,renderAutomation} from './automation.js?v=20261123-flow2';
+import {selectDashboardView} from './dashboard.js?v=20261123-flow2';
+import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261123-flow2';
+import config from './config.js?v=20261123-flow2';
+import {Cloud} from './api.js?v=20261123-flow2';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261123-flow2';
 const $=id=>document.getElementById(id);
 let remote,groupControls;
 let removedSources=[];
@@ -60,7 +60,7 @@ function render(){
 function selectDashboard(view){selectDashboardView(view,document,render);}
 async function load(){
  if(document.hidden||editing||document.querySelector('.original[open]')||document.activeElement?.matches('.assignment-editor'))return;
- try{const data=await cloud.data();all=mergeRows(data.todos,data.states);drafts.setScope(cloud.local?cloud.url:cloud.session()?.user?.id);drafts.reconcile(all);if(cloud.local)groupControls.update(data.registry||readRegistry(data.todos));else await remote?.refresh();renderSourceOptions($('source'),all,removedSources);if(cloud.local)renderImages(readImages(data.todos),$('imagesPanel'),{link:linkLocalImage});else{syncGalleryScope();renderGallery();if($('imagesPanel').open)await loadGallery();}renderAutomation(readAutomation(data.states),$('automationPanel'));$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=!!cloud.local;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
+ try{const data=await cloud.data();all=mergeRows(data.todos,data.states);drafts.setScope(cloud.local?cloud.url:cloud.session()?.user?.id);drafts.reconcile(all);if(cloud.local)groupControls.update(data.registry||readRegistry(data.todos));else await remote?.refresh();renderSourceOptions($('source'),all,removedSources);if(cloud.local)renderImages(readImages(data.todos),$('imagesPanel'),{link:linkLocalImage});else{syncGalleryScope();renderGallery();if($('imagesPanel').open)await loadGallery();}renderAutomation(readAutomation(data.states),$('automationPanel'),{onRetryGroup:async group=>{const panel=$('remoteControl').closest('details');if(panel)panel.open=true;remote.input.value=group;remote.form.scrollIntoView({behavior:'smooth',block:'center'});await remote.submit();}});$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=!!cloud.local;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
  catch(e){if(!cloud.session())showLogin();$('loginError').textContent=$('error').textContent=e.message;}
 }
 function syncGalleryScope(){const owner=cloud.session()?.user?.id||'session';if(owner!==galleryOwner){galleryOwner=owner;galleryRows=[];galleryLoaded=false;}}
@@ -96,7 +96,7 @@ for(const id of ['source','priority','status','completion','sort'])$(id).addEven
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session()){load();if(!document.hidden)remote?.refresh();}setInterval(()=>{if(!document.hidden&&cloud?.session()&&!editing)load();},120000);
-const BUILD='20261120-egress1';
+const BUILD='20261123-flow2';
 async function resumeHomeScreen(){
  if(document.hidden||editing||drafts.size||document.activeElement?.matches('input,textarea'))return;
  try{

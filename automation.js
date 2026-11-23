@@ -2,7 +2,7 @@ export const AUTOMATION_KEY='603f861f4871965ee0ba166853dddbc00f27ab98b094089fcff
 export function readAutomation(states){
  try{const row=states.find(x=>x.todo_key===AUTOMATION_KEY);const report=JSON.parse(row?.assignment_status||'null');return report?.version===1&&Array.isArray(report.items)?report:null;}catch{return null;}
 }
-export function renderAutomation(report,panel){
+export function renderAutomation(report,panel,{onRetryGroup}={}){
  if(!panel)return;
  const labels={success:'成功',failed:'失敗',partial:'部分失敗',review:'待核對',running:'執行中',unknown:'尚無紀錄'};
  const make=(tag,text,cls)=>{const e=document.createElement(tag);e.textContent=text;if(cls)e.className=cls;return e;};
@@ -19,6 +19,14 @@ export function renderAutomation(report,panel){
   const state=labels[item.status]?item.status:'unknown';const row=make('div','','automation-row');
   const heading=make('div','','automation-heading');heading.append(make('strong',String(item.name||'流程').slice(0,50)),make('span',labels[state],'automation-badge automation-'+state));
   row.append(heading,make('div',`${format(item.at)} · ${String(item.schedule||'').slice(0,50)}`,'automation-time'));
+  if(item.attempt_origin)row.append(make('div','最近执行来源：'+item.attempt_origin,'automation-time'));
+  if(item.scheduled_at)row.append(make('div',`最近每日排程：${format(item.scheduled_at)} · ${labels[item.scheduled_status]||'待确认'}`,'automation-time'));
+  if(item.last_success_at)row.append(make('div','最近成功：'+format(item.last_success_at),'automation-time'));
+  for(const group of (Array.isArray(item.retry_groups)?item.retry_groups:[])){
+   if(typeof group!=='string'||group.length>100||!onRetryGroup)continue;
+   const retry=make('button','重新执行群组流程 · '+group,'automation-retry');retry.type='button';
+   retry.addEventListener('click',()=>onRetryGroup(group));row.append(retry);
+  }
   if(item.note)row.append(make('p',String(item.note).slice(0,200),'automation-note'));body.append(row);
  }
  body.append(make('p','此處顯示各流程最近一次執行結果；日期不同代表尚未執行今天的排程。','automation-time'));

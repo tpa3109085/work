@@ -31,3 +31,22 @@ test('review warnings stay distinct from failed jobs and all six flows are visib
   assert.equal(summary.children[1].textContent,'1 項失敗需處理');
  }finally{globalThis.document=previous;}
 });
+
+
+test('retry is explicit, uses safe text and keeps schedule and recovery times separate',()=>{
+ const previous=globalThis.document;
+ globalThis.document={createElement:tag=>({...element(tag),addEventListener(name,fn){this[name]=fn}})};
+ try{
+  const summary=element('summary'),body=element(),panel={querySelector:s=>s==='summary'?summary:body};
+  let requested=null;
+  const report={reported_at:new Date().toISOString(),items:[{name:'LINE',status:'partial',at:'2026-11-23T12:00:00+08:00',scheduled_at:'2026-11-23T09:00:00+08:00',scheduled_status:'partial',last_success_at:'2026-11-22T18:00:00+08:00',retry_groups:['<script>group</script>']}]};
+  renderAutomation(report,panel,{onRetryGroup:g=>{requested=g}});
+  assert.equal(requested,null);
+  const row=body.children.find(x=>x.className==='automation-row');
+  assert.ok(row.children.some(x=>x.textContent.startsWith('最近每日排程')));
+  assert.ok(row.children.some(x=>x.textContent.startsWith('最近成功')));
+  const retry=row.children.find(x=>x.tag==='button');
+  assert.equal(retry.textContent,'重新执行群组流程 · <script>group</script>');
+  assert.equal(retry.innerHTML,undefined);retry.click();assert.equal(requested,'<script>group</script>');
+ }finally{globalThis.document=previous;}
+});
