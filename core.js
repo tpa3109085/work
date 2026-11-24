@@ -1,6 +1,6 @@
-import {REMOTE_KEYS} from './remote.js?v=20261125-odis-cards3';
-import {BOARD_KEY} from './board-data.js?v=20261125-odis-cards3';
-import {sourceAllowed} from './originals.js?v=20261125-odis-cards3';
+import {REMOTE_KEYS} from './remote.js?v=20261125-odis-deadline4';
+import {BOARD_KEY} from './board-data.js?v=20261125-odis-deadline4';
+import {sourceAllowed} from './originals.js?v=20261125-odis-deadline4';
 export function validateConfig(config){
  const url=String(config.supabaseUrl||'').replace(/\/$/,'');
  const key=String(config.publishableKey||'');
