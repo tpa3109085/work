@@ -1,16 +1,17 @@
-import {LocalCloud} from './local.js?v=20261123-flow2';
-import {GroupSettings,readRegistry} from './groups.js?v=20261123-flow2';
-import {RemoteControl} from './remote.js?v=20261123-flow2';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261123-flow2';
-import {renderOriginal} from './originals.js?v=20261123-flow2';
-import {readImages,renderImages} from './images.js?v=20261123-flow2';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261123-flow2';
-import {readAutomation,renderAutomation} from './automation.js?v=20261123-flow2';
-import {selectDashboardView} from './dashboard.js?v=20261123-flow2';
-import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261123-flow2';
-import config from './config.js?v=20261123-flow2';
-import {Cloud} from './api.js?v=20261123-flow2';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261123-flow2';
+import {calendarEventUrl} from './calendar.js?v=20261124-egress2';
+import {LocalCloud} from './local.js?v=20261124-egress2';
+import {GroupSettings,readRegistry} from './groups.js?v=20261124-egress2';
+import {RemoteControl} from './remote.js?v=20261124-egress2';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261124-egress2';
+import {renderOriginal} from './originals.js?v=20261124-egress2';
+import {readImages,renderImages} from './images.js?v=20261124-egress2';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261124-egress2';
+import {readAutomation,renderAutomation} from './automation.js?v=20261124-egress2';
+import {selectDashboardView} from './dashboard.js?v=20261124-egress2';
+import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261124-egress2';
+import config from './config.js?v=20261124-egress2';
+import {Cloud} from './api.js?v=20261124-egress2';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261124-egress2';
 const $=id=>document.getElementById(id);
 let remote,groupControls;
 let removedSources=[];
@@ -54,13 +55,19 @@ function render(){
   const completed=node('td');completed.append(check);const priority=node('td',x.priority,'priority '+x.priority);
   const task=node('td',undefined,'task');const source=original(x);const title=node('button',x.task,'task-title task-link');title.type='button';title.setAttribute('aria-expanded','false');title.addEventListener('click',()=>{source.open=!source.open;title.setAttribute('aria-expanded',String(source.open));});source.addEventListener('toggle',()=>title.setAttribute('aria-expanded',String(source.open)));task.append(title,node('div',`${x.source_type} · ${x.subject||''}`,'task-note'),source);
   const owner=node('td',x.assigned_to||'待確認','owner');const due=node('td',undefined,'deadline-cell');due.append(node('span',x.deadline.display,'badge '+(x.deadline.status==='已逾期'?'overdue':x.deadline.status==='今天到期'?'today':'')),node('div',x.deadline.status+' · '+x.deadline.label,'task-note'));
-  const edit=node('button','修改期限','secondary small');edit.addEventListener('click',()=>openDeadline(x));due.append(edit);row.append(completed,priority,task,owner,assignment(x),due);return row;
+  const edit=node('button','修改期限','secondary small');edit.addEventListener('click',()=>openDeadline(x));due.append(edit);const calendar=node('button','加入 Google 日曆','secondary small calendar-link');calendar.type='button';calendar.title='帶入原文文字，開啟可編輯行程後再儲存';calendar.addEventListener('click',async()=>{
+   const draft=window.open('about:blank','_blank');if(draft){draft.opener=null;draft.document.title='正在讀取原文';draft.document.body.textContent='正在讀取原文，請稍候……';}
+   calendar.disabled=true;calendar.textContent='讀取原文中…';
+   try{if(!x.original_text)x.original_text=await cloud.original(x.todo_key);const url=calendarEventUrl(x);if(draft)draft.location.replace(url);else{$('error').textContent='原文已讀取，請允許彈出視窗後再按一次「加入 Google 日曆」。';}}
+   catch(error){if(draft)draft.close();$('error').textContent='原文讀取失敗，尚未開啟日曆行程：'+error.message;}
+   finally{calendar.disabled=false;calendar.textContent='加入 Google 日曆';}
+  });due.append(calendar);row.append(completed,priority,task,owner,assignment(x),due);return row;
  }));
 }
 function selectDashboard(view){selectDashboardView(view,document,render);}
-async function load(){
+async function load({reconcile=false}={}){
  if(document.hidden||editing||document.querySelector('.original[open]')||document.activeElement?.matches('.assignment-editor'))return;
- try{const data=await cloud.data();all=mergeRows(data.todos,data.states);drafts.setScope(cloud.local?cloud.url:cloud.session()?.user?.id);drafts.reconcile(all);if(cloud.local)groupControls.update(data.registry||readRegistry(data.todos));else await remote?.refresh();renderSourceOptions($('source'),all,removedSources);if(cloud.local)renderImages(readImages(data.todos),$('imagesPanel'),{link:linkLocalImage});else{syncGalleryScope();renderGallery();if($('imagesPanel').open)await loadGallery();}renderAutomation(readAutomation(data.states),$('automationPanel'),{onRetryGroup:async group=>{const panel=$('remoteControl').closest('details');if(panel)panel.open=true;remote.input.value=group;remote.form.scrollIntoView({behavior:'smooth',block:'center'});await remote.submit();}});$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=!!cloud.local;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
+ try{const data=await cloud.data({reconcile});all=mergeRows(data.todos,data.states);drafts.setScope(cloud.local?cloud.url:cloud.session()?.user?.id);drafts.reconcile(all);if(cloud.local)groupControls.update(data.registry||readRegistry(data.todos));else await remote?.refresh();renderSourceOptions($('source'),all,removedSources);if(cloud.local)renderImages(readImages(data.todos),$('imagesPanel'),{link:linkLocalImage});else{syncGalleryScope();renderGallery();if($('imagesPanel').open)await loadGallery();}renderAutomation(readAutomation(data.states),$('automationPanel'),{onRetryGroup:async group=>{const panel=$('remoteControl').closest('details');if(panel)panel.open=true;remote.input.value=group;remote.form.scrollIntoView({behavior:'smooth',block:'center'});await remote.submit();}});$('loginPanel').hidden=true;$('workspace').hidden=false;$('logout').hidden=!!cloud.local;$('error').textContent='';$('updated').textContent='資料讀取時間：'+new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+' · 台北時間';render();}
  catch(e){if(!cloud.session())showLogin();$('loginError').textContent=$('error').textContent=e.message;}
 }
 function syncGalleryScope(){const owner=cloud.session()?.user?.id||'session';if(owner!==galleryOwner){galleryOwner=owner;galleryRows=[];galleryLoaded=false;}}
@@ -90,13 +97,13 @@ async function saveDeadline(mode,clear=false){
 }
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginButton').disabled=true;$('loginError').textContent='';try{await cloud.login($('email').value.trim(),$('password').value);$('password').value='';await load();}catch(error){$('loginError').textContent=error.message;}finally{$('loginButton').disabled=false;}});
 $('logout').addEventListener('click',async()=>{if(drafts.size&&!confirm('尚有未保存的交辦內容。確定放棄並登出？'))return;try{await cloud.logout();}catch{}drafts.setScope(null);showLogin();});
-$('refresh').addEventListener('click',load);
+$('refresh').addEventListener('click',()=>load({reconcile:true}));
 $('resetFilters').addEventListener('click',()=>{resetFilters(document);render();});
 for(const id of ['source','priority','status','completion','sort'])$(id).addEventListener('change',render);$('search').addEventListener('input',render);
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session()){load();if(!document.hidden)remote?.refresh();}setInterval(()=>{if(!document.hidden&&cloud?.session()&&!editing)load();},120000);
-const BUILD='20261123-flow2';
+const BUILD='20261124-egress2';
 async function resumeHomeScreen(){
  if(document.hidden||editing||drafts.size||document.activeElement?.matches('input,textarea'))return;
  try{

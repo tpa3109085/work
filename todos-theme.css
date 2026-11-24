@@ -1,0 +1,36 @@
+/* Scoped theme: duty board and entry styles remain independent. */
+.todos-page{background:#f1f5fa;color:#20364d;font-family:system-ui,-apple-system,"Microsoft JhengHei",sans-serif}
+.todos-page main{max-width:1400px}
+.todos-page main>header{background:linear-gradient(115deg,#102d4c,#164e63);border:1px solid #254f6b;border-radius:18px;padding:28px;box-shadow:0 12px 32px #16364d18}
+.todos-page h1{color:#fff;font-size:32px;line-height:1.4}.todos-page header .eyebrow{color:#bcdce7}.todos-page header .sub{color:#dfedf4;line-height:1.7}
+.todos-page main>nav{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 18px;padding:13px;background:#fff;border:1px solid #d5e1ef;border-radius:14px;box-shadow:0 5px 18px #18354b06}
+.todos-page main>nav a{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:11px 17px;border-radius:10px;margin:0;font-size:15px;line-height:1.4;font-weight:750;text-decoration:none}
+.todos-page main>nav .back-home{background:#ffe09a;color:#243449;border:1px solid #efd08c}
+.todos-page main>nav .back-home:hover{background:#ffcf65}
+.todos-page main>nav .board-link{background:#edf7f3;color:#1e604d;border:1px solid #c1dfd1}
+.todos-page main>nav a[href="#taskListTitle"]{background:#eaf2ff;color:#245285;border-color:#c4d7f0}
+.todos-page a:focus-visible,.todos-page button:focus-visible{outline:3px solid #3679ba;outline-offset:3px}
+.todos-page .connection-status{border:1px solid #c3e0d2;background:#eaf6ee;color:#225b42}
+.todos-page #workspace>.dashboard{background:#f4f7ff;border:1px solid #ccd9ef;border-left:5px solid #427bd3;border-radius:16px;padding:21px;margin-bottom:20px}
+.todos-page #workspace>.dashboard h2{color:#264f87;font-size:23px}.todos-page #workspace>.dashboard .eyebrow{color:#476b96}
+.todos-page #workspace>.deadline-tracking{background:#fff9ef;border-color:#edddbc;border-left-color:#ba8a32}.todos-page .deadline-tracking h2{color:#7a571e}
+.todos-page .stat{box-shadow:none;border-radius:12px;padding:18px}.todos-page .stat-pending{background:#edf3ff;border-color:#ccdcf3;border-top-color:#4f7fc5}.todos-page .stat-pending strong{color:#2a558d}
+.todos-page .stat-done{background:#edf8f2;border-color:#c8e1d2;border-top-color:#3b8d67}.todos-page .stat-all{background:#f3effc;border-color:#dcd3ec;border-top-color:#8b72bb}.todos-page .stat-all strong{color:#665086}
+.todos-page .stat-today{background:#fff1f3;border-color:#efc4cd;border-top-color:#cf435c}.todos-page .stat-today>span,.todos-page .stat-today strong{color:#a92944}
+.todos-page .stat-overdue{background:#ffebee;border-color:#edb9c4;border-top-color:#a42640}.todos-page .stat-overdue>span,.todos-page .stat-overdue strong{color:#981d36}
+.todos-page .stat-next7{background:#f0f5ff;border-color:#cbdcf6;border-top-color:#4b7dc5}.todos-page .stat-tomorrow{background:#fff4df;border-color:#ecd4a0;border-top-color:#ba882c}
+.todos-page .stat small{color:#4d657c}.todos-page .stat span{font-weight:650}
+.todos-page .panel,.todos-page .images-panel,.todos-page .automation-panel{box-shadow:0 5px 18px #18354b06;border-radius:16px}
+.todos-page #remoteControl{background:#eff9f5;border-color:#bdded0;border-left:5px solid #36866b}.todos-page #remoteControl summary{color:#24654f}
+.todos-page #imagesPanel{background:#f6f2fc;border:1px solid #ded1ef;border-left:5px solid #9376b7;padding:17px}.todos-page #imagesPanel>summary{color:#614386}
+.todos-page #automationPanel{background:#eff5fd;border:1px solid #ccdcf1;border-left:5px solid #618bbe}.todos-page #automationPanel>summary{color:#345f92}
+.todos-page #groupSettingsPanel{background:#fff8ed;border-color:#ecdbb8;border-left:5px solid #b78a39}.todos-page #groupSettingsPanel>summary{color:#795a25}
+.todos-page .task-list-panel{border-color:#c9d9ea;border-top:5px solid #527caa;background:#fff}.todos-page #taskListTitle{color:#214d78;font-size:24px}
+.todos-page .toolbar{padding:14px;background:#f0f5fb;border:1px solid #dbe5f0;border-radius:12px}.todos-page .toolbar input,.todos-page .toolbar select{background:#fff;border-color:#c1d1e3;color:#263e59}
+.todos-page .task-list-panel th{background:#eaf1fb;color:#315c86;font-weight:750}.todos-page .task-list-panel td{border-bottom-color:#e3ebf4}
+.todos-page .task-list-panel tr.overdue-row{background:#fff1f3}.todos-page .task-list-panel tr.today-row{background:#fff9ed}
+.todos-page .secondary{background:#edf3fc;color:#244f7c;border-color:#c9d9eb}.todos-page .secondary:hover:not(:disabled){background:#dce9fa;color:#183f6a}
+.todos-page .calendar-link{background:#eaf5ee;color:#265e40;border-color:#c3ddcd}.todos-page .calendar-link:hover:not(:disabled){background:#d6ebde;color:#184b2d}
+.todos-page .assignment-editor{background:#fbfcff;border-color:#c6d6e7}.todos-page .muted,.todos-page .task-note{color:#566e83}
+.todos-page #reminders{background:#fff0f2;color:#8e2942;border-color:#eabec9;border-left:5px solid #bd3c59}
+@media(max-width:760px){.todos-page main>header{padding:23px 20px}.todos-page h1{font-size:28px}.todos-page main>nav{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:11px}.todos-page main>nav .back-home{grid-column:1/-1}.todos-page main>nav a{padding:11px 9px;font-size:14px}.todos-page #workspace>.dashboard{padding:16px}.todos-page .dashboard h2{font-size:21px}.todos-page .toolbar{padding:11px}.todos-page .stat{padding:15px}.todos-page #taskListTitle{font-size:22px}}

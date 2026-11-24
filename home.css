@@ -1,0 +1,25 @@
+/* Work platform entry; all page styles scoped to the entry. */
+.home-page{min-height:100vh;background:radial-gradient(ellipse at 10% 0,#e3edf9 0,transparent 52%),radial-gradient(ellipse at 95% 90%,#e6f1ec 0,transparent 50%),#f3f6fa;color:#20354d;font-family:system-ui,-apple-system,"Microsoft JhengHei",sans-serif}
+.home-page .home-shell{max-width:1320px;margin:auto;padding:54px 32px 32px}
+.home-page .home-head{display:block;text-align:left;padding:38px 42px 42px;margin:0 0 28px;border-radius:24px;background:linear-gradient(115deg,#102d4c,#174e62);border:1px solid #254d68;box-shadow:0 16px 40px #15314c13;position:relative;overflow:hidden}
+.home-page .home-head::after{content:'';position:absolute;width:190px;height:190px;border:34px solid #ffffff05;border-radius:50%;right:-44px;top:-75px;pointer-events:none}
+.home-page .home-eyebrow{color:#c4dfe9;font-size:13px;letter-spacing:.13em;font-weight:650;margin:0 0 16px}
+.home-page .home-title{color:#fff;font-size:46px;letter-spacing:.06em;line-height:1.2;font-weight:800;margin:0 0 17px}
+.home-page .home-sub{color:#dceaf2;font-size:16px;line-height:1.9;max-width:810px;margin:0}
+.home-page .home-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.home-page .home-card{--accent:#2b609e;--light:#edf4ff;--edge:#cbdcf2;display:flex;flex-direction:column;gap:24px;min-width:0;min-height:318px;background:linear-gradient(155deg,#fff 55%,var(--light));border:1px solid var(--edge);border-top:4px solid var(--accent);border-radius:18px;padding:27px 25px 24px;color:#20354d;text-decoration:none;box-shadow:0 7px 26px #16314b08;transition:transform .16s ease,box-shadow .16s ease}
+.home-page .home-card--duty{--accent:#28775f;--light:#edf8f2;--edge:#c5e0d5}.home-page .home-card--calendar{--accent:#745398;--light:#f5effc;--edge:#ddcfee}
+.home-page .home-card:hover{transform:translateY(-4px);box-shadow:0 16px 32px #16314b12}.home-page .home-card:focus-visible{outline:3px solid var(--accent);outline-offset:5px}
+.home-page .home-card-top{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.home-page .home-card-icon{width:54px;height:54px;display:grid;place-items:center;flex:none;border-radius:15px;background:var(--light);color:var(--accent);border:1px solid var(--edge)}
+.home-page .home-card-icon svg{width:29px;height:29px}.home-page .home-card-meta{color:#566c81;font-size:12px;text-align:right;line-height:1.7;max-width:145px}
+.home-page .home-card-body{flex:1}.home-page .home-card-title{color:#1c3d59;font-size:25px;line-height:1.4;letter-spacing:.02em;margin:0 0 12px}
+.home-page .home-card-desc{font-size:15px;color:#536b80;line-height:1.9;margin:0;overflow-wrap:anywhere}
+.home-page .home-card-cta{display:flex;align-items:center;justify-content:center;color:var(--accent);background:var(--light);border:1px solid var(--edge);border-radius:10px;padding:11px 13px;font-size:15px;font-weight:750;line-height:1.5}
+.home-page .home-foot{margin:28px 0 0;padding:16px;text-align:center;font-size:13px;color:#596f83}.home-page .home-clock{font-variant-numeric:tabular-nums}
+/* Existing pages also use this class for their navigation. */
+.back-home{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;background:#edf3fa;color:#30547b;border:1px solid #dfe8f2;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap}
+.back-home:focus-visible{outline:3px solid #3679ba;outline-offset:3px}
+@media(max-width:1000px){.home-page .home-cards{grid-template-columns:1fr;gap:18px}.home-page .home-card{min-height:0;gap:18px}.home-page .home-card-meta{max-width:none}.home-page .home-card-desc{max-width:740px}}
+@media(max-width:600px){.home-page .home-shell{padding:22px 16px}.home-page .home-head{padding:27px 24px 30px;border-radius:19px;margin-bottom:22px}.home-page .home-title{font-size:36px}.home-page .home-sub{font-size:15px;line-height:1.8}.home-page .home-eyebrow{font-size:12px}.home-page .home-card{padding:22px 20px;border-radius:16px}.home-page .home-card-title{font-size:23px}.home-page .home-card-icon{width:48px;height:48px}.home-page .home-card-meta{max-width:165px}.home-page .home-card-desc{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.home-page .home-card{transition:none}.home-page .home-card:hover{transform:none}}

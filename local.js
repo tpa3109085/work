@@ -1,5 +1,6 @@
-import {REMOTE_KEYS,REMOTE_KIND} from './remote.js?v=20261123-flow2';
-import {AUTOMATION_KEY} from './automation.js?v=20261123-flow2';
+import {traditionalUi} from './locale.js?v=20261124-egress2';
+import {REMOTE_KEYS,REMOTE_KIND} from './remote.js?v=20261124-egress2';
+import {AUTOMATION_KEY} from './automation.js?v=20261124-egress2';
 export function localRows(data){
  const stamp='2000-01-01T00:00:00Z';
  const todos=data.todos.map(row=>({todo_key:row.key,task:row.task,subject:row.subject,source_type:row.source_type==='LINE'?'LINE':'Email',assigned_to:row.assigned_to,priority:row.priority,analysis_date:row.analysis_deadline_date||null,analysis_time:row.analysis_deadline_time||null,analysis_note:row.analysis_due_display,source_completed:!!row.completed,original_text:'',source_url:row.source_url}));
@@ -11,7 +12,7 @@ export function localRows(data){
 export class LocalCloud{
  constructor(fetcher=globalThis.fetch.bind(globalThis),storage=localStorage){this.local=true;this.url='local-messagecontrol';this.fetcher=fetcher;this.storage=storage;}
  session(){return {local:true};}
- async get(path,body){const response=await this.fetcher(path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{cache:'no-store'});const value=await response.json();if(!response.ok||value.ok===false)throw Error(value.error||'本機資料服務暫時無法使用');return value;}
+ async get(path,body){const response=await this.fetcher(path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{cache:'no-store'});const value=await response.json();if(!response.ok||value.ok===false)throw Error(traditionalUi(value.error||'本機資料服務暫時無法使用'));return value;}
  async data(){return localRows(await this.get('/api/todos'));}
  async original(key){return this.get('/api/original/'+key);}
  complete(key,completed){return this.get('/api/status',{key,completed});}

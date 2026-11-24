@@ -44,12 +44,13 @@ test('account switch clears original and image memory caches even with matching 
  assert.match(await c.original(key),/Bearer B/);assert.equal((await c.images())[0].original_text,'Bearer B photo');assert.equal(s.photoReads,2);
  c.clear();assert.equal(c.originals.size,0);assert.equal(c.imageRows.size,0);await assert.rejects(c.original(key),/請先登入/);
 });
-test('idle remote controls wait thirty seconds while active work and explicit refresh stay responsive',async()=>{
+test('idle remote controls wait sixty seconds while active work and explicit refresh stay responsive',async()=>{
  const previous=globalThis.document;globalThis.document={getElementById:()=>null};
  try{
   let calls=0;const cloud={url:'test',session:()=>({}),control:async()=>{calls++;return {states:[],registry:{}}}};
   const form={addEventListener(){}};const control=new RemoteControl(cloud,{querySelector:q=>q==='form'?form:{}});control.update=()=>{};
   await control.refresh();await control.refresh();assert.equal(calls,1);
+  control.lastPoll=Date.now()-31000;await control.refresh();assert.equal(calls,1);
   control.pending=true;control.lastPoll=Date.now()-6000;await control.refresh();assert.equal(calls,2);
   await control.refresh({force:true});assert.equal(calls,3);
  }finally{globalThis.document=previous;}

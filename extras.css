@@ -4,3 +4,5 @@
 .assignment{min-width:180px}
 .assignment-editor{display:block;width:100%;min-height:64px;resize:vertical;border:1px solid #cdd6e2;border-radius:8px;padding:8px;font:inherit;color:inherit}
 .assignment-editor:focus{outline:2px solid #6398d8;outline-offset:2px}
+
+.calendar-link{display:inline-block;margin:6px 0 0 6px;text-decoration:none;color:#174b5b;background:#edf5ff;border:1px solid #9ebbdc;border-radius:6px;padding:6px 9px}

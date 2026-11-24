@@ -46,7 +46,7 @@ test('retry is explicit, uses safe text and keeps schedule and recovery times se
   assert.ok(row.children.some(x=>x.textContent.startsWith('最近每日排程')));
   assert.ok(row.children.some(x=>x.textContent.startsWith('最近成功')));
   const retry=row.children.find(x=>x.tag==='button');
-  assert.equal(retry.textContent,'重新执行群组流程 · <script>group</script>');
+  assert.equal(retry.textContent,'重新執行群組流程 · <script>group</script>');
   assert.equal(retry.innerHTML,undefined);retry.click();assert.equal(requested,'<script>group</script>');
  }finally{globalThis.document=previous;}
 });

@@ -1,5 +1,5 @@
-import {REMOTE_KEYS} from './remote.js?v=20261123-flow2';
-import {sourceAllowed} from './originals.js?v=20261123-flow2';
+import {REMOTE_KEYS} from './remote.js?v=20261124-egress2';
+import {sourceAllowed} from './originals.js?v=20261124-egress2';
 export function validateConfig(config){
  const url=String(config.supabaseUrl||'').replace(/\/$/,'');
  const key=String(config.publishableKey||'');
