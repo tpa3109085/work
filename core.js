@@ -1,6 +1,6 @@
-import {REMOTE_KEYS} from './remote.js?v=20261125-odis-env1';
-import {BOARD_KEY} from './board-data.js?v=20261125-odis-env1';
-import {sourceAllowed} from './originals.js?v=20261125-odis-env1';
+import {REMOTE_KEYS} from './remote.js?v=20261125-odis-cloud2';
+import {BOARD_KEY} from './board-data.js?v=20261125-odis-cloud2';
+import {sourceAllowed} from './originals.js?v=20261125-odis-cloud2';
 export function validateConfig(config){
  const url=String(config.supabaseUrl||'').replace(/\/$/,'');
  const key=String(config.publishableKey||'');
@@ -35,7 +35,7 @@ export function deadline(row,state={},now=new Date()){
 }
 export function mergeRows(todos,states,now=new Date()){
  const map=new Map(states.map(s=>[s.todo_key,s]));
- const visible=todos.filter(row=>row.todo_key!==BOARD_KEY&&!Object.values(REMOTE_KEYS).includes(row.todo_key)&&sourceAllowed(row)&&!(row.subject==='MessageControl 圖片來源 v1'&&row.task==='LINE 圖片預覽（系統資料）')&&row.todo_key!=='603f861f4871965ee0ba166853dddbc00f27ab98b094089fcff0c9022c073cfa'&&!(row.todo_key==='a'.repeat(64)&&row.subject==='虚构测试资料，不是真实 LINE 聊天'&&row.task==='【连接测试】确认线上待办能够读取和保存'));
+ const visible=todos.filter(row=>row.subject!=='MessageControl ODIS v1'&&row.todo_key!==BOARD_KEY&&!Object.values(REMOTE_KEYS).includes(row.todo_key)&&sourceAllowed(row)&&!(row.subject==='MessageControl 圖片來源 v1'&&row.task==='LINE 圖片預覽（系統資料）')&&row.todo_key!=='603f861f4871965ee0ba166853dddbc00f27ab98b094089fcff0c9022c073cfa'&&!(row.todo_key==='a'.repeat(64)&&row.subject==='虚构测试资料，不是真实 LINE 聊天'&&row.task==='【连接测试】确认线上待办能够读取和保存'));
  return visible.map(row=>{const state=map.get(row.todo_key)||{};return {...row,state,
   completed:state.completed_updated_at?!!state.completed:!!row.source_completed,
   assignment:state.assignment_updated_at?(state.assignment_status||''):'',deadline:deadline(row,state,now)};})

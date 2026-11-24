@@ -1,7 +1,7 @@
-import {REMOTE_KEYS} from './remote.js?v=20261125-odis-env1';
-import {validateConfig} from './core.js?v=20261125-odis-env1';
-import {HIDDEN_SOURCE_NOTE} from './originals.js?v=20261125-odis-env1';
-import {BOARD_KEY,BOARD_KIND} from './board-data.js?v=20261125-odis-env1';
+import {REMOTE_KEYS} from './remote.js?v=20261125-odis-cloud2';
+import {validateConfig} from './core.js?v=20261125-odis-cloud2';
+import {HIDDEN_SOURCE_NOTE} from './originals.js?v=20261125-odis-cloud2';
+import {BOARD_KEY,BOARD_KIND} from './board-data.js?v=20261125-odis-cloud2';
 const IMAGE_SUBJECT='MessageControl 圖片來源 v1';
 const TODO_FIELDS='todo_key,task,subject,source_type,assigned_to,priority,analysis_date,analysis_time,analysis_note,source_completed,synced_at';
 const STATE_FIELDS='todo_key,completed,completed_updated_at,deadline_mode,manual_date,manual_time,deadline_updated_at,assignment_status,assignment_updated_at';
@@ -59,7 +59,7 @@ export class Cloud{
   const previous=this.listCache?.owner===owner?this.listCache:null;
   const todos=new Map(previous?.todos||[]),states=new Map(previous?.states||[]);
   const excluded=[...Object.values(REMOTE_KEYS),BOARD_KEY].join(',');
-  const todoBase='/rest/v1/mc_cloud_todos?subject=neq.'+encodeURIComponent(IMAGE_SUBJECT)+'&todo_key=not.in.('+excluded+')';
+  const todoBase='/rest/v1/mc_cloud_todos?subject=neq.MessageControl%20ODIS%20v1&subject=neq.'+encodeURIComponent(IMAGE_SUBJECT)+'&todo_key=not.in.('+excluded+')';
   const stateBase='/rest/v1/mc_cloud_state?todo_key=not.in.('+excluded+')';
   const responseTimes=[];
   const readAll=async query=>{const rows=[];for(let offset=0;;offset+=500){const batch=await this.request(query+'&order=todo_key&limit=500&offset='+offset);const at=this.responseTimes.get(batch);if(Number.isFinite(at))responseTimes.push(at);rows.push(...batch);if(batch.length<500)return rows;}};
