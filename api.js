@@ -1,6 +1,7 @@
-import {REMOTE_KEYS} from './remote.js?v=20261124-egress2';
-import {validateConfig} from './core.js?v=20261124-egress2';
-import {HIDDEN_SOURCE_NOTE} from './originals.js?v=20261124-egress2';
+import {REMOTE_KEYS} from './remote.js?v=20261124-duty-cloud1';
+import {validateConfig} from './core.js?v=20261124-duty-cloud1';
+import {HIDDEN_SOURCE_NOTE} from './originals.js?v=20261124-duty-cloud1';
+import {BOARD_KEY,BOARD_KIND} from './board-data.js?v=20261124-duty-cloud1';
 const IMAGE_SUBJECT='MessageControl 圖片來源 v1';
 const TODO_FIELDS='todo_key,task,subject,source_type,assigned_to,priority,analysis_date,analysis_time,analysis_note,source_completed,synced_at';
 const STATE_FIELDS='todo_key,completed,completed_updated_at,deadline_mode,manual_date,manual_time,deadline_updated_at,assignment_status,assignment_updated_at';
@@ -9,7 +10,7 @@ export class Cloud{
  session(){try{return JSON.parse(this.storage.getItem(this.storageKey)||'null');}catch{return null;}}
  store(session){this.storage.setItem(this.storageKey,JSON.stringify({...session,expires_at:Date.now()+session.expires_in*1000}));}
  clear(){this.storage.removeItem(this.storageKey);this.resetCaches();}
- resetCaches(){this.cacheOwner=null;this.originals=new Map();this.imageRows=new Map();this.versions=new Map();this.dataPromise=null;this.imagePromise=null;this.listCache=null;this.registryCache=null;}
+ resetCaches(){this.cacheOwner=null;this.originals=new Map();this.imageRows=new Map();this.versions=new Map();this.dataPromise=null;this.imagePromise=null;this.listCache=null;this.registryCache=null;this.boardCache=null;}
  scope(){const s=this.session();if(!s)throw Error('請先登入');const owner=s.user?.id||s.user?.email||'session';if(this.cacheOwner!==owner){this.resetCaches();this.cacheOwner=owner;}return owner;}
  checkScope(owner){if(this.scope()!==owner)throw Error('帳號已切換，請重新讀取資料');}
  async request(path,{method='GET',body,auth=true,retried=false}={}){
@@ -57,7 +58,7 @@ export class Cloud{
  async readData(owner,reconcile=false){
   const previous=this.listCache?.owner===owner?this.listCache:null;
   const todos=new Map(previous?.todos||[]),states=new Map(previous?.states||[]);
-  const excluded=Object.values(REMOTE_KEYS).join(',');
+  const excluded=[...Object.values(REMOTE_KEYS),BOARD_KEY].join(',');
   const todoBase='/rest/v1/mc_cloud_todos?subject=neq.'+encodeURIComponent(IMAGE_SUBJECT)+'&todo_key=not.in.('+excluded+')';
   const stateBase='/rest/v1/mc_cloud_state?todo_key=not.in.('+excluded+')';
   const responseTimes=[];
@@ -92,6 +93,18 @@ export class Cloud{
   return {todos:rows,states:[...states.values()]};
  }
 
+ async board(){
+  const owner=this.scope();
+  const manifest=await this.request('/rest/v1/mc_cloud_todos?todo_key=eq.'+BOARD_KEY+'&select=todo_key,synced_at&limit=1');this.checkScope(owner);
+  if(!manifest.length){this.boardCache=null;return null;}
+  const version=manifest[0].synced_at;
+  if(this.boardCache?.version===version)return this.boardCache.value;
+  const rows=await this.request('/rest/v1/mc_cloud_todos?todo_key=eq.'+BOARD_KEY+'&select=original_text,synced_at&limit=1');this.checkScope(owner);
+  if(!rows.length){this.boardCache=null;return null;}
+  let value;try{value=JSON.parse(rows[0].original_text);}catch{throw Error('看板資料格式不正確');}
+  if(value?.kind!==BOARD_KIND)throw Error('看板資料格式不正確');
+  value={...value,synced_at:rows[0].synced_at};this.boardCache={version:rows[0].synced_at,value};return value;
+ }
  async original(key){
   const owner=this.scope(),version=this.versions.get(key),cached=this.originals.get(key);
   if(cached&&cached.version===version)return cached.value;

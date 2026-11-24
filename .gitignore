@@ -50,3 +50,5 @@
 !version.json
 !workspace.css
 !workspace.js
+
+!board-data.js

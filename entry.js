@@ -1,5 +1,5 @@
 // 入口分流：預設顯示兩卡片入口；?view=todos 進管制事項；?view=duty 進即時看板
-const VERSION = '20261124-egress2';
+const VERSION = '20261124-duty-cloud1';
 const params = new URLSearchParams(location.search);
 const view = params.get('view');
 
