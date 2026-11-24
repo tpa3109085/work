@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123d55">
+<title>公文系統・臺東縣政府 ODIS</title>
+<link rel="icon" href="./app-icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./odis.css?v=20261125-odis-pin1">
+</head>
+<body class="odis-page">
+<main class="odis-shell">
+  <header class="odis-header">
+    <div>
+      <p class="odis-eyebrow">臺東縣政府公文系統 ODIS</p>
+      <h1>公文系統</h1>
+      <p>陳家慧的公文清單與內容（唯讀查詢，不會送出或簽核任何公文）</p>
+    </div>
+    <nav class="odis-nav">
+      <a href="./">← 返回入口</a>
+      <button type="button" id="odisRefresh">重新整理</button>
+      <span class="odis-clock" id="odisClock"></span>
+    </nav>
+  </header>
+  <div id="odisRoot"></div>
+</main>
+<script src="./odis.js?v=20261125-odis-pin1"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 document.title='工作平台｜鹿野分隊';
 // 入口頁：兩個卡片區（管制事項 / 鹿野分隊即時看板）
-const VERSION = '20261124-duty-cloud1';
+const VERSION = '20261125-odis-pin1';
 
 const CARDS = [
   {
@@ -21,7 +21,16 @@ const CARDS = [
     meta: '單位狀態 · 勤務 · 裝備 · 未填報',
     cta: '進入即時看板'
   },
-  {key:'calendar',href:'./?view=calendar',icon:'▦',title:'個人勤休月曆',desc:'多人排班、勤二休二月曆、個別日期調整、超勤時數與金額試算，以及 PNG 匯出。',meta:'勤休 · 月曆 · 超勤試算',cta:'進入勤休月曆'}
+  {key:'calendar',href:'./?view=calendar',icon:'▦',title:'個人勤休月曆',desc:'多人排班、勤二休二月曆、個別日期調整、超勤時數與金額試算，以及 PNG 匯出。',meta:'勤休 · 月曆 · 超勤試算',cta:'進入勤休月曆'},
+  {
+    key: 'odis',
+    href: './?view=odis',
+    icon: '✉',
+    title: '公文系統',
+    desc: '臺東縣政府公文系統（ODIS）：使用 PIN 手動查看公文清單與內容，不排程、不推播。',
+    meta: '公文清單 · 公文內容 · 唯讀',
+    cta: '進入公文系統'
+  }
 ];
 
 function el(tag, text, cls) {
@@ -35,7 +44,7 @@ function cardIcon(key){
  const box=el('span',undefined,'home-card-icon');box.setAttribute('aria-hidden','true');
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
  for(const [attr,value] of Object.entries({viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'1.7','stroke-linecap':'round','stroke-linejoin':'round'}))svg.setAttribute(attr,value);
- const paths={todos:['M9 5h10v15H5V5h1','M9 3h6v4H9z','m8 13 2 2 5-5'],duty:['M3 4h18v12H3z','M8 21h8','M12 16v5','M7 12V9','M12 12V7','M17 12v-2'],calendar:['M4 5h16v16H4z','M8 3v4','M16 3v4','M4 10h16','M8 14h1','M14 14h2','M8 18h1']};
+ const paths={todos:['M9 5h10v15H5V5h1','M9 3h6v4H9z','m8 13 2 2 5-5'],duty:['M3 4h18v12H3z','M8 21h8','M12 16v5','M7 12V9','M12 12V7','M17 12v-2'],calendar:['M4 5h16v16H4z','M8 3v4','M16 3v4','M4 10h16','M8 14h1','M14 14h2','M8 18h1'],odis:['M3 6h18v13H3z','m3 7 9 6 9-6','M7 3h10']};
  for(const d of paths[key]){const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',d);svg.append(path);}box.append(svg);return box;
 }
 
@@ -75,7 +84,7 @@ function render() {
   head.append(
     el('p', '鹿野分隊 · 每日工作入口', 'home-eyebrow'),
     el('h1', '工作平台', 'home-title'),
-    el('p', '管制事項、分隊即時看板與個人勤休月曆，整合交辦追蹤、勤務狀態與個人排班。', 'home-sub')
+    el('p', '管制事項、分隊即時看板、個人勤休月曆與公文系統，整合交辦追蹤、勤務狀態、個人排班與公文查閱。', 'home-sub')
   );
 
   const grid = el('div', undefined, 'home-cards');

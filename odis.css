@@ -1,0 +1,106 @@
+/* 公文系統（ODIS）頁面樣式：清單 + 內容，手機與桌面都好讀 */
+.odis-page { background: #f4f7f9; }
+.odis-shell { max-width: 1180px; margin: 0 auto; padding: 22px 18px 60px; }
+.odis-header { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+.odis-eyebrow { margin: 0 0 6px; font-size: 12px; letter-spacing: .12em; color: #5b7a8c; font-weight: 700; }
+.odis-header h1 { margin: 0 0 6px; font-size: 26px; color: #123d55; line-height: 1.25; }
+.odis-header p { margin: 0; color: #5b7a8c; font-size: 13px; line-height: 1.6; }
+.odis-nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.odis-nav a, .odis-nav button {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px;
+  border-radius: 10px; border: 1px solid #cfe0e6; background: #fff; color: #123d55;
+  font-size: 13px; font-weight: 700; text-decoration: none; cursor: pointer;
+}
+.odis-nav a:hover, .odis-nav button:hover { background: #eaf4f6; border-color: #9dc4cd; }
+.odis-nav button:disabled { opacity: .55; cursor: default; }
+.odis-clock { font-variant-numeric: tabular-nums; color: #5b7a8c; font-size: 12px; }
+
+.odis-status { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px 16px; border-radius: 12px; background: #fff; border: 1px solid #dbe7ea; margin-bottom: 16px; font-size: 13px; }
+.odis-status.is-ok { border-left: 4px solid #22a477; }
+.odis-status.is-warn { border-left: 4px solid #e0a020; background: #fffdf5; }
+.odis-status.is-error { border-left: 4px solid #d64550; background: #fff6f7; }
+.odis-status strong { color: #123d55; }
+.odis-status span { color: #5b7a8c; }
+
+.odis-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.odis-kpi { background: #fff; border: 1px solid #dbe7ea; border-radius: 12px; padding: 14px 16px; }
+.odis-kpi span { display: block; font-size: 12px; color: #5b7a8c; margin-bottom: 6px; }
+.odis-kpi strong { font-size: 24px; color: #123d55; font-variant-numeric: tabular-nums; }
+
+.odis-panel { background: #fff; border: 1px solid #dbe7ea; border-radius: 14px; overflow: hidden; }
+.odis-panel h2 { margin: 0; padding: 16px 18px; font-size: 16px; color: #123d55; border-bottom: 1px solid #e6eef1; background: #fbfdfe; }
+
+.odis-list { list-style: none; margin: 0; padding: 0; }
+.odis-item { border-bottom: 1px solid #eef4f6; }
+.odis-item:last-child { border-bottom: 0; }
+.odis-item button {
+  display: block; width: 100%; text-align: left; background: none; border: 0; cursor: pointer;
+  padding: 14px 18px; font: inherit; color: inherit;
+}
+.odis-item button:hover { background: #f5fbfc; }
+.odis-item button:focus-visible { outline: 3px solid #1a7287; outline-offset: -3px; }
+.odis-item-top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+.odis-docno { font-size: 12px; font-weight: 700; color: #1a7287; background: #eaf4f6; padding: 2px 8px; border-radius: 6px; }
+.odis-date { font-size: 12px; color: #5b7a8c; font-variant-numeric: tabular-nums; }
+.odis-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #eef4f6; color: #4a6b7c; }
+.odis-badge.is-pending { background: #fff4e0; color: #9a6a00; }
+.odis-badge.is-done { background: #e6f7ef; color: #138263; }
+.odis-subject { font-size: 14px; color: #173247; line-height: 1.6; font-weight: 600; }
+.odis-cells { margin-top: 6px; font-size: 12px; color: #7b93a1; }
+
+.odis-empty { padding: 28px 18px; text-align: center; color: #5b7a8c; font-size: 13px; line-height: 1.8; }
+.odis-empty a { color: #1a7287; font-weight: 700; }
+
+.odis-setup { padding: 18px; }
+.odis-setup h3 { margin: 0 0 10px; font-size: 15px; color: #b3261e; }
+.odis-setup p { margin: 0 0 10px; font-size: 13px; color: #4a6b7c; line-height: 1.7; }
+.odis-setup pre {
+  margin: 0 0 12px; padding: 12px 14px; background: #f4f7f9; border: 1px solid #dbe7ea;
+  border-radius: 10px; font-size: 12px; line-height: 1.7; color: #173247;
+  white-space: pre-wrap; word-break: break-word; overflow-x: auto;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+.odis-setup .odis-hint { font-size: 12px; color: #7b93a1; }
+
+.odis-doc { padding: 18px; }
+.odis-doc h3 { margin: 0 0 8px; font-size: 17px; color: #123d55; line-height: 1.5; }
+.odis-doc-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; font-size: 12px; color: #5b7a8c; }
+.odis-doc-body {
+  white-space: pre-wrap; word-break: break-word; font-size: 14px; line-height: 1.9; color: #173247;
+  background: #fbfdfe; border: 1px solid #e6eef1; border-radius: 10px; padding: 16px;
+  max-height: 62vh; overflow: auto;
+}
+.odis-back { margin-bottom: 12px; }
+
+/* 每日公文推播面板 */
+.odis-daily { padding: 18px; }
+.odis-daily h2 { margin: 0 0 12px; font-size: 16px; color: #123d55; }
+.odis-daily-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 12px; font-size: 12px; color: #5b7a8c; }
+.odis-daily-error {
+  margin-bottom: 12px; padding: 10px 12px; border-radius: 10px;
+  background: #fdf1f0; border: 1px solid #f3c9c5; color: #b3261e; font-size: 12.5px; line-height: 1.7;
+}
+.odis-daily-msg {
+  margin: 0 0 14px; padding: 14px 16px; background: #f7fbfa; border: 1px solid #d8e8e6;
+  border-radius: 10px; font-size: 12.5px; line-height: 1.85; color: #173247;
+  white-space: pre-wrap; word-break: break-word; max-height: 46vh; overflow: auto;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+.odis-daily-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.odis-daily-actions button {
+  flex: 1 1 auto; min-height: 42px; padding: 10px 16px; border-radius: 10px; cursor: pointer;
+  border: 1px solid #cfe0e6; background: #fff; color: #124b66; font-size: 13px; font-weight: 600;
+}
+.odis-daily-actions button:last-child { background: #176a78; border-color: #176a78; color: #fff; }
+.odis-daily-actions button:disabled { opacity: .55; cursor: default; }
+
+@media (max-width: 720px) {
+  .odis-shell { padding: 16px 12px 48px; }
+  .odis-header h1 { font-size: 21px; }
+  .odis-nav { width: 100%; }
+  .odis-nav a, .odis-nav button { flex: 1 1 auto; justify-content: center; min-height: 44px; }
+  .odis-kpis { grid-template-columns: repeat(2, 1fr); }
+  .odis-item button { padding: 13px 14px; }
+  .odis-doc-body { max-height: none; font-size: 13.5px; }
+}
+.odis-panel form{max-width:440px;display:grid;gap:16px}.odis-panel label{display:grid;gap:10px;font-size:16px}.odis-panel input{font:inherit;padding:12px;border:1px solid #a8becb;border-radius:9px;width:100%;box-sizing:border-box}.odis-panel form button{min-height:46px;background:#234d68;color:#fff;border:0;border-radius:9px;font:inherit}.odis-error{color:#ab2437}.odis-source-link{display:inline-flex;margin-top:18px;padding:12px;border-radius:9px;background:#e6eef7;color:#224f72;font-weight:700}.odis-doc-body{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;line-height:1.8}

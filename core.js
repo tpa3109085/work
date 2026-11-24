@@ -1,6 +1,6 @@
-import {REMOTE_KEYS} from './remote.js?v=20261124-duty-cloud1';
-import {BOARD_KEY} from './board-data.js?v=20261124-duty-cloud1';
-import {sourceAllowed} from './originals.js?v=20261124-duty-cloud1';
+import {REMOTE_KEYS} from './remote.js?v=20261125-odis-pin1';
+import {BOARD_KEY} from './board-data.js?v=20261125-odis-pin1';
+import {sourceAllowed} from './originals.js?v=20261125-odis-pin1';
 export function validateConfig(config){
  const url=String(config.supabaseUrl||'').replace(/\/$/,'');
  const key=String(config.publishableKey||'');

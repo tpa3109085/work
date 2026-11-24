@@ -1,9 +1,9 @@
-import {traditionalUi} from './locale.js?v=20261124-duty-cloud1';
-import {renderDutyCards} from './duty-cards.js?v=20261124-duty-cloud1';
-import {renderIcare} from './icare.js?v=20261124-duty-cloud1';
-import {Cloud} from './api.js?v=20261124-duty-cloud1';
-import config from './config.js?v=20261124-duty-cloud1';
-import {boardView} from './board-data.js?v=20261124-duty-cloud1';
+import {traditionalUi} from './locale.js?v=20261125-odis-pin1';
+import {renderDutyCards} from './duty-cards.js?v=20261125-odis-pin1';
+import {renderIcare} from './icare.js?v=20261125-odis-pin1';
+import {Cloud} from './api.js?v=20261125-odis-pin1';
+import config from './config.js?v=20261125-odis-pin1';
+import {boardView} from './board-data.js?v=20261125-odis-pin1';
 document.title='管制事項・鹿野分隊即時看板';
 document.body.className='duty-board-page';
 document.body.innerHTML=`<main class="board-shell"><header class="board-header"><div><p class="board-eyebrow">管制事項・鹿野分隊</p><h1>管制事項・鹿野分隊即時看板</h1><p>單位狀態與當日勤務為主體 · 車輛保養勾選 · 上班人員火搶裝備勾選 · 今日未填報</p></div><div><span id="boardClock" class="board-clock"></span><nav><a class="back-todos" href="./?view=todos">← 返回管制事項</a><a class="back-home" href="./">入口首頁</a><a class="back-calendar" href="./?view=calendar">消防勤休月曆</a><button id="boardFullscreen" type="button">全螢幕顯示</button></nav></div></header><section id="boardRoot" aria-label="勤務與保養卡片"></section><section id="icareRoot" aria-label="iCare 今日未填報"></section><aside class="board-settings"><span id="boardMessage" role="status"></span><div><button id="boardConnect" type="button">連接／重新登入消防系統</button><button id="boardRefresh" type="button">立即讀取來源</button></div></aside><footer>自動顯示最新讀數 · 看板每 15 秒更新，來源每日 10:00、16:00 採集 · 台北時間 · 只讀取，不代勾選</footer></main>`;
