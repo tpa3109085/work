@@ -1,6 +1,6 @@
 // Opens an editable Google Calendar draft. No event is saved automatically.
-import {validDate,validTime} from './core.js?v=20261125-odis-cloud2';
-import {sourcePayload} from './originals.js?v=20261125-odis-cloud2';
+import {validDate,validTime} from './core.js?v=20261125-odis-cards3';
+import {sourcePayload} from './originals.js?v=20261125-odis-cards3';
 export function calendarOriginalText(value){
  const p=sourcePayload(value);
  return [p.text||'',...(p.images||[]).filter(i=>i.ocr_text&&!['reference','deleted_reference','expired'].includes(i.status)).map(i=>'圖片文字辨識：\n'+i.ocr_text)].filter(Boolean).join('\n\n');

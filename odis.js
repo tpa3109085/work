@@ -1,9 +1,10 @@
-import {Cloud} from './api.js?v=20261125-odis-cloud2';
-import config from './config.js?v=20261125-odis-cloud2';
-import {ODIS_KEYS,documentKey} from './odis-protocol.js?v=20261125-odis-cloud2';
+import {Cloud} from './api.js?v=20261125-odis-cards3';
+import config from './config.js?v=20261125-odis-cards3';
+import {ODIS_KEYS,documentKey} from './odis-protocol.js?v=20261125-odis-cards3';
 /* ODIS: PIN-only local reader; no scheduled fetching or push. */
 const root=document.getElementById('odisRoot'),local=['127.0.0.1','localhost'].includes(location.hostname);
-let listing=null,busy=false;
+let listing=null,busy=false,selectedCategory=null;
+const CATEGORIES=["主辦公文","受會公文","決行公文","會核公文"];
 const cloud=local?null:new Cloud(config);let recordOwner=null;const recordCache=new Map();
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const stamp=value=>value?new Date(value).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false}):'—';
@@ -18,13 +19,16 @@ function prompt(message=''){
 
 }
 function renderList(){
- root.replaceChildren();note();const panel=el('section',undefined,'odis-panel');panel.append(el('h2',listing.owner+'的公文 · '+listing.count+' 件'),el('p','來源讀取：'+stamp(listing.fetched_at)+(listing.cached?'（快取）':''),'odis-hint'),el('p',listing.scope||'','odis-hint'));
+ const items=(listing.items||[]).filter(i=>Number.isInteger(i.category)&&i.category>=0&&i.category<4);if(!CATEGORIES[selectedCategory])selectedCategory=items[0]?.category??0;
+ root.replaceChildren();note();const panel=el('section',undefined,'odis-panel');panel.append(el('h2',listing.owner+'的公文 · '+items.length+' 件'),el('p','來源讀取：'+stamp(listing.fetched_at)+(listing.cached?'（快取）':''),'odis-hint'),el('p','主辦、受會、決行、會核 · 點選分類卡片查看公文','odis-hint'));
  const exit=el('button','結束查看');exit.type='button';exit.addEventListener('click',async()=>{if(busy)return;busy=true;try{if(local)await request('./api/odis/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});recordCache.clear();prompt();}catch(e){panel.append(el('p',e.message));}finally{busy=false;}});panel.append(exit);
- if(!listing.items?.length)panel.append(el('p','目前五個公文匣沒有公文。'));
- const list=el('ul',undefined,'odis-list');for(const item of listing.items||[]){const row=el('li',undefined,'odis-item'),button=el('button');button.type='button';button.append(el('div',item.status+' · '+item.doc_no,'odis-docno'),el('div',item.subject||'（無主旨）','odis-subject'),el('div',(item.date_label||'日期')+'：'+(item.date||'—'),'odis-date'));button.addEventListener('click',()=>openDoc(item));row.append(button);list.append(row);}panel.append(list);root.append(panel);
+ const cards=el('div',undefined,'odis-category-cards');cards.setAttribute('aria-label','公文分類');
+ CATEGORIES.forEach((label,category)=>{const card=el('button',undefined,'odis-category-card'+(selectedCategory===category?' is-active':''));card.type='button';card.dataset.category=String(category);card.setAttribute('aria-pressed',String(selectedCategory===category));card.append(el('span',label),el('strong',String(items.filter(i=>i.category===category).length)),el('small','件'));card.addEventListener('click',()=>{selectedCategory=category;renderList();});cards.append(card);});panel.append(cards,el('h3',CATEGORIES[selectedCategory]));
+ const selected=items.filter(i=>i.category===selectedCategory);if(!selected.length)panel.append(el('p','此類目前沒有公文。','odis-empty'));
+ const list=el('ul',undefined,'odis-list');for(const item of selected){const row=el('li',undefined,'odis-item'),button=el('button');button.type='button';button.append(el('div',item.status+' · '+item.doc_no,'odis-docno'),el('div',item.subject||'（無主旨）','odis-subject'),el('div',(item.date_label||'日期')+'：'+(item.date||'—'),'odis-date'));button.addEventListener('click',()=>openDoc(item));row.append(button);list.append(row);}panel.append(list);root.append(panel);
 }
-async function openDoc(item){if(busy)return;busy=true;const panel=el('section',undefined,'odis-panel'),back=el('button','返回公文清單');back.type='button';back.addEventListener('click',()=>{if(!busy)renderList();});root.replaceChildren();note();root.append(panel);panel.append(back,el('h2',item.subject),el('p','正在讀取公文內容…'));
- try{const data=local?await request('./api/odis/doc/'+encodeURIComponent(item.key)):await remoteDocument(item.key);panel.lastChild.remove();if(!data.ok)throw Error(data.error||'無法讀取公文');panel.append(el('p',data.doc_no+' · '+(data.date_label||'日期')+' '+(data.date||'—')),el('pre',data.content,'odis-doc-body'));if(data.truncated)panel.append(el('p','內容超出顯示上限。')); }catch(e){panel.append(el('p',e.message));}finally{busy=false;}}
+async function openDoc(item,force=false){if(busy)return;busy=true;const panel=el('section',undefined,'odis-panel'),back=el('button','返回公文清單');back.type='button';back.addEventListener('click',()=>{if(!busy)renderList();});root.replaceChildren();note();root.append(panel);const renew=el('button','更新簽稿正文');renew.type='button';renew.addEventListener('click',()=>openDoc(item,true));panel.append(back,renew,el('h2',item.subject),el('p','正在讀取公文內容…'));
+ try{const data=local?await request('./api/odis/doc/'+encodeURIComponent(item.key)):await remoteDocument(item.key,force);panel.lastChild.remove();if(!data.ok)throw Error(data.error||'無法讀取公文');panel.append(el('p',data.doc_no+' · '+(data.date_label||'日期')+' '+(data.date||'—')),el('p',(data.content_source||'紙筆欄簽稿正文')+(data.pages?' · '+data.pages+' 頁':''),'odis-hint'),el('pre',data.content,'odis-doc-body'));if(data.truncated)panel.append(el('p','內容超出顯示上限。')); }catch(e){panel.append(el('p',e.message));}finally{busy=false;}}
 document.getElementById('odisRefresh').addEventListener('click',async()=>{if(!listing||busy)return;busy=true;try{const data=local?await request('./api/odis?refresh=1'):await remoteList();if(!data.ok)throw Error(data.error||'重新讀取失敗');listing=data;renderList();}catch(e){prompt(e.message);}finally{busy=false;}});
 function clock(){document.getElementById('odisClock').textContent=new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false});}clock();setInterval(clock,30000);prompt();
 
@@ -54,6 +58,6 @@ async function remoteRequest(command,key){
  }throw Error('等候本機回覆逾時，請稍後手動重試。');}finally{status.textContent='';}
 }
 async function remoteList(){await remoteRequest('list');const data=await readRecord(ODIS_KEYS.list);if(!data)throw Error('尚未收到公文清單');return data;}
-async function remoteDocument(key){const record=await documentKey(key),cached=await readRecord(record);if(cached)return cached;await remoteRequest('document',key);const data=await readRecord(record);if(!data)throw Error('尚未收到公文內容');return data;}
+async function remoteDocument(key,force=false){const record=await documentKey(key),cached=await readRecord(record);if(!force&&cached?.viewer==="paper_pen_v3")return cached;await remoteRequest('document',key);const data=await readRecord(record);if(!data||data.viewer!=='paper_pen_v3')throw Error('新版紙筆內容尚未同步，請重新手動讀取。');return data;}
 window.addEventListener('storage',event=>{if(cloud&&event.key===cloud.storageKey){listing=null;recordCache.clear();prompt();}});
 if(cloud?.session())readRecord(ODIS_KEYS.list).then(data=>{if(data){listing=data;renderList();}}).catch(error=>prompt(error.message));

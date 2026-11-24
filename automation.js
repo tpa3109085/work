@@ -1,4 +1,4 @@
-import {traditionalUi} from './locale.js?v=20261125-odis-cloud2';
+import {traditionalUi} from './locale.js?v=20261125-odis-cards3';
 export const AUTOMATION_KEY='603f861f4871965ee0ba166853dddbc00f27ab98b094089fcff0c9022c073cfa';
 export function readAutomation(states){
  try{const row=states.find(x=>x.todo_key===AUTOMATION_KEY);const report=JSON.parse(row?.assignment_status||'null');return report?.version===1&&Array.isArray(report.items)?report:null;}catch{return null;}
