@@ -1,6 +1,6 @@
 document.title='工作平台｜鹿野分隊';
 // 入口頁：兩個卡片區（管制事項 / 鹿野分隊即時看板）
-const VERSION = '20261125-odis-pin1';
+const VERSION = '20261125-odis-env1';
 
 const CARDS = [
   {
@@ -27,7 +27,7 @@ const CARDS = [
     href: './?view=odis',
     icon: '✉',
     title: '公文系統',
-    desc: '臺東縣政府公文系統（ODIS）：使用 PIN 手動查看公文清單與內容，不排程、不推播。',
+    desc: '臺東縣政府公文系統（ODIS）：透過後台登入設定手動查看公文清單與內容，不排程、不推播。',
     meta: '公文清單 · 公文內容 · 唯讀',
     cta: '進入公文系統'
   }
