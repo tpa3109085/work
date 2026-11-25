@@ -1,6 +1,6 @@
-import {REMOTE_KEYS} from './remote.js?v=20261125-portable-egress1';
-import {BOARD_KEY} from './board-data.js?v=20261125-portable-egress1';
-import {sourceAllowed} from './originals.js?v=20261125-portable-egress1';
+import {REMOTE_KEYS} from './remote.js?v=20261125-env-sources2';
+import {BOARD_KEY} from './board-data.js?v=20261125-env-sources2';
+import {sourceAllowed} from './originals.js?v=20261125-env-sources2';
 export function validateConfig(config){
  const url=String(config.supabaseUrl||'').replace(/\/$/,'');
  const key=String(config.publishableKey||'');
