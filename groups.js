@@ -1,4 +1,4 @@
-import {REMOTE_KEYS,REMOTE_KIND,onlineHost,remoteRecord} from './remote.js?v=20261125-env-sources3';
+import {REMOTE_KEYS,REMOTE_KIND,onlineHost,remoteRecord} from './remote.js?v=20261125-duty-reminder1';
 export function readRegistry(rows){try{const result=JSON.parse(rows.find(x=>x.todo_key===REMOTE_KEYS.registry)?.original_text||'null');return result?.kind===REMOTE_KIND?result:null;}catch{return null;}}
 export class GroupSettings{
  constructor(cloud,panel,changed){this.cloud=cloud;this.panel=panel;this.changed=changed;this.registry={groups:[],removed:[]};this.busy=false;this.signature='';}
@@ -8,7 +8,7 @@ export class GroupSettings{
   const make=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
   for(const item of this.registry.groups||[]){
    const row=make('div');row.className='group-row';row.append(make('strong',item.group_name));
-   for(const [field,label] of [['export_enabled','每日 09:00、18:00 匯出'],['analyze_enabled','繼續分析管制']]){const wrap=make('label'),box=make('input');box.type='checkbox';box.checked=!!item[field];box.disabled=this.busy;box.onchange=()=>this.change(item.group_name,field,box.checked);wrap.append(box,make('span',label));row.append(wrap);}
+   for(const [field,label] of [['export_enabled','每日 10:00、18:00 匯出'],['analyze_enabled','繼續分析管制']]){const wrap=make('label'),box=make('input');box.type='checkbox';box.checked=!!item[field];box.disabled=this.busy;box.onchange=()=>this.change(item.group_name,field,box.checked);wrap.append(box,make('span',label));row.append(wrap);}
    const remove=make('button','刪除排程');remove.type='button';remove.className='group-remove';remove.disabled=this.busy;remove.onclick=()=>{if(confirm('刪除「'+item.group_name+'」的排程並移除來源選項？聊天、圖片與待辦資料保留。'))this.change(item.group_name,null,null,'remove');};row.append(remove);host.append(row);
   }
   if(!(this.registry.groups||[]).length)host.append(make('p','目前沒有群組排程，可在上方輸入名稱加入。'));

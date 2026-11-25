@@ -1,4 +1,4 @@
-import {traditionalUi} from './locale.js?v=20261125-env-sources3';
+import {traditionalUi} from './locale.js?v=20261125-duty-reminder1';
 const labels={checked:'已勾選',partial:'部分未勾選',unchecked:'未勾選',unknown:'待確認',no_items:'無對應項目'};
 const element=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const displayTime=value=>{const d=new Date(value||'');return Number.isFinite(d.getTime())?d.toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false}):'—';};
@@ -18,8 +18,10 @@ function collectionBar(data,fresh,manual){
  if(manual)head.append(element('span','現場核對','collection-tag'));
  const detail=element('details',undefined,'collection-detail');
  detail.append(element('summary','詳細狀態'));
- detail.append(element('p',`每日 10:00、16:00（台北時間） · 下次：${displayTime(schedule.next_run)}`,'board-muted'));
+ detail.append(element('p',`每日 10:00、14:00（台北時間） · 下次：${displayTime(schedule.next_run)}`,'board-muted'));
  detail.append(element('p',`最後心跳：${displayTime(data.collector?.heartbeat_at)} · 資料讀取：${displayTime(data.captured_at)}`,'board-muted'));
+ const reminder=data.reminder;
+ if(reminder?.enabled){const statuses={preview:'預覽，未送出',sent:'已送出',no_omissions:'無缺漏，不推播',already_attempted:'今日已處理',failed_or_uncertain:'送出結果待確認，不自動重送',not_sent_retryable:'LINE 忙碌，等待重試',disabled:'未啟用',outside_delivery_window:'非推播時段',paused:'已暫停'};detail.append(element('p',`每日 10:00 缺漏提醒 → ${reminder.group} · ${statuses[reminder.status]||'等待首次執行'}${reminder.at?' · '+displayTime(reminder.at):''}`,'board-reminder'));}
  if(last.slot)detail.append(element('p',`最近排程：${displayTime(last.slot)} · ${states[last.status]||'待確認'} · 已嘗試 ${last.attempts||0} 次`,'board-muted'));
  if(data.api_checks?.length){
   const apiStates={json:'已返回 JSON',authenticated:'登入有效',cached:'使用有效快取',needs_login:'登入已失效',retryable:'服務暫時忙碌',failed:'讀取失敗',invalid_json:'返回格式無法確認',unexpected:'返回格式異常',too_large:'返回資料超過檢查上限'};

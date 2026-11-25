@@ -13,6 +13,8 @@
 }
 .odis-nav a:hover, .odis-nav button:hover { background: #eaf4f6; border-color: #9dc4cd; }
 .odis-nav button:disabled { opacity: .55; cursor: default; }
+.odis-nav .odis-home-link {background:#ffe2a0;color:#594113;border-color:#e9c374;}
+.odis-nav a:focus-visible {outline:3px solid #1a7287;outline-offset:3px;}
 .odis-clock { font-variant-numeric: tabular-nums; color: #5b7a8c; font-size: 12px; }
 
 .odis-status { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px 16px; border-radius: 12px; background: #fff; border: 1px solid #dbe7ea; margin-bottom: 16px; font-size: 13px; }

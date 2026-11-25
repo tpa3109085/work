@@ -1,12 +1,12 @@
-import {traditionalUi} from './locale.js?v=20261125-env-sources3';
-import {renderDutyCards} from './duty-cards.js?v=20261125-env-sources3';
-import {renderIcare} from './icare.js?v=20261125-env-sources3';
-import {Cloud} from './api.js?v=20261125-env-sources3';
-import config from './config.js?v=20261125-env-sources3';
-import {boardView} from './board-data.js?v=20261125-env-sources3';
+import {traditionalUi} from './locale.js?v=20261125-duty-reminder1';
+import {renderDutyCards} from './duty-cards.js?v=20261125-duty-reminder1';
+import {renderIcare} from './icare.js?v=20261125-duty-reminder1';
+import {Cloud} from './api.js?v=20261125-duty-reminder1';
+import config from './config.js?v=20261125-duty-reminder1';
+import {boardView} from './board-data.js?v=20261125-duty-reminder1';
 document.title='分隊即時看板';
 document.body.className='duty-board-page';
-document.body.innerHTML=`<main class="board-shell"><header class="board-header"><div><p class="board-eyebrow">工作平台・消防勤務</p><h1>分隊即時看板</h1><p>單位狀態與當日勤務為主體 · 車輛保養勾選 · 上班人員火搶裝備勾選 · 今日未填報</p></div><div><span id="boardClock" class="board-clock"></span><nav><a class="back-todos" href="./?view=todos">← 返回管制事項</a><a class="back-home" href="./">入口首頁</a><a class="back-calendar" href="./?view=calendar">消防勤休月曆</a><button id="boardFullscreen" type="button">全螢幕顯示</button></nav></div></header><section id="boardRoot" aria-label="勤務與保養卡片"></section><section id="icareRoot" aria-label="iCare 今日未填報"></section><aside class="board-settings"><span id="boardMessage" role="status"></span><div><button id="boardConnect" type="button">連接／重新登入消防系統</button><button id="boardRefresh" type="button">立即讀取來源</button></div></aside><footer>自動顯示最新讀數 · 看板每 15 秒更新，來源每日 10:00、16:00 採集 · 台北時間 · 只讀取，不代勾選</footer></main>`;
+document.body.innerHTML=`<main class="board-shell"><header class="board-header"><div><p class="board-eyebrow">工作平台・消防勤務</p><h1>分隊即時看板</h1><p>單位狀態與當日勤務為主體 · 車輛保養勾選 · 上班人員火搶裝備勾選 · 今日未填報</p></div><div><span id="boardClock" class="board-clock"></span><nav><a class="back-todos" href="./?view=todos">← 返回管制事項</a><a class="back-home" href="./">入口首頁</a><a class="back-calendar" href="./?view=calendar">消防勤休月曆</a><button id="boardFullscreen" type="button">全螢幕顯示</button></nav></div></header><section id="boardRoot" aria-label="勤務與保養卡片"></section><section id="icareRoot" aria-label="iCare 今日未填報"></section><aside class="board-settings"><span id="boardMessage" role="status"></span><div><button id="boardConnect" type="button">連接／重新登入消防系統</button><button id="boardRefresh" type="button">立即讀取來源</button></div></aside><footer>自動顯示最新讀數 · 看板每 15 秒更新，來源每日 10:00、14:00 採集 · 台北時間 · 只讀取，不代勾選</footer></main>`;
 const root=document.getElementById('boardRoot'),icareRoot=document.getElementById('icareRoot'),message=document.getElementById('boardMessage');
 document.querySelector('.board-header h1').textContent='分隊即時看板';
 document.querySelector('.board-eyebrow').textContent='工作平台・消防勤務';
@@ -53,13 +53,13 @@ async function load(){
    const button=renderIcare(view.icare,icareRoot);if(button)button.addEventListener('click',()=>load());
    const stamp=new Date(payload.synced_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false});
    message.textContent='雲端讀數 · 最後資料同步：'+stamp+' · 本機離線時保留最近一次讀數。';
-   document.querySelector('.board-shell footer').textContent='雲端唯讀看板 · 每 60 秒檢查版本，資料變動才下載 · 來源每日 10:00、16:00 採集 · 台北時間 · 不代勾選';
+   document.querySelector('.board-shell footer').textContent='雲端唯讀看板 · 每 60 秒檢查版本，資料變動才下載 · 來源每日 10:00、14:00 採集 · 台北時間 · 不代勾選';
    return;
   }
   const response=await fetch('./api/firemis',{cache:'no-store'});if(!response.ok)throw Error('資料服務暫時無法連線');
   lastData=await response.json();selectedUnit(lastData);renderDutyCards(lastData,root,{local:true});
   const manual=lastData.collection_mode==='manual_chrome'||lastData.collection_mode==='manual_browser'||lastData.collector?.phase==='manual_review';
-  document.querySelector('.board-shell footer').textContent=manual?'Chrome 現場核對 · 看板每 15 秒更新顯示 · 持續自動採集尚未連接 · 台北時間 · 只讀取，不代勾選':'自動顯示最新讀數 · 看板每 15 秒更新，來源每日 10:00、16:00 採集 · 台北時間 · 只讀取，不代勾選';
+  document.querySelector('.board-shell footer').textContent=manual?'Chrome 現場核對 · 看板每 15 秒更新顯示 · 持續自動採集尚未連接 · 台北時間 · 只讀取，不代勾選':'自動顯示最新讀數 · 看板每 15 秒更新，來源每日 10:00、14:00 採集 · 台北時間 · 只讀取，不代勾選';
   message.textContent=traditionalUi(lastData.collector?.message||'尚未啟動採集器，請連接專用 Chrome 並登入消防系統。');
  }catch(error){if(!local){if(!cloud.session()){showLogin();return;}if(lastData)renderDutyCards(boardView({kind:'mc_duty_board_v1',duty:lastData}).duty,root,{local:true});message.textContent='雲端連線中斷，保留上次讀數並自動重試。';}else{renderDutyCards(lastData,root,{local:true,disconnected:true});message.textContent='連線中斷，將自動重試。';}}
  finally{loading=false;}
