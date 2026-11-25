@@ -1,5 +1,9 @@
-import {traditionalUi} from './locale.js?v=20261125-odis-deadline4';
+import {traditionalUi} from './locale.js?v=20261125-portable-egress1';
 export const AUTOMATION_KEY='603f861f4871965ee0ba166853dddbc00f27ab98b094089fcff0c9022c073cfa';
+export function automationIsOld(report,now=Date.now()){
+ const cadence=Math.max(0,Math.min(3600,Number(report.heartbeat_seconds)||0));
+ return now-new Date(report.reported_at).getTime()>Math.max(300000,(cadence+180)*1000);
+}
 export function readAutomation(states){
  try{const row=states.find(x=>x.todo_key===AUTOMATION_KEY);const report=JSON.parse(row?.assignment_status||'null');return report?.version===1&&Array.isArray(report.items)?report:null;}catch{return null;}
 }
@@ -14,7 +18,7 @@ export function renderAutomation(report,panel,{onRetryGroup}={}){
  summary.replaceChildren(make('span','自動化執行狀態'),make('span',!items.length?'尚未收到回報':failures?`${failures} 項失敗需處理`:reviews?`${reviews} 項待核對`:'查看最近執行結果',failures?'automation-alert':reviews?'automation-review':'automation-hint'));
  const format=value=>{const d=new Date(value);return Number.isFinite(d.getTime())?d.toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false}):'尚無時間紀錄';};
  if(!items.length){body.append(make('p','尚未收到本機回報。請確認電腦已開機且雲端同步正在執行。','muted'));return;}
- const old=Date.now()-new Date(report.reported_at).getTime()>300000;
+ const old=automationIsOld(report);
  body.append(make('p',`最後回報：${format(report.reported_at)}（台北時間）${old?' · 回報較舊，請確認本機連線':''}`,'automation-time'));
  for(const item of items){
   const state=labels[item.status]?item.status:'unknown';const row=make('div','','automation-row');
