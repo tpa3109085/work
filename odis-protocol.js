@@ -1,3 +1,4 @@
 export const ODIS_SUBJECT="MessageControl ODIS v1";
 export const ODIS_KEYS={"list": "16da47bfc18a43609b3ba5a94204b62a26ffcffa5c344cdb3b7b0bf386725b4e", "request": "f6c5206fad89d614bb6b63cf1bc47a14d9b8bcf3d747c8cc72ee6c0717a5a775", "response": "21e9e4ab264b289c5a93ce1d242df9b0a4425104144546ab55055dd463b33272", "host": "aeff93200fd9028a663e30e8330025fb11e023f1a83d3c8b450182e67272fb50"};
 export async function documentKey(key){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("messagecontrol_odis_document_v1|"+key));return [...new Uint8Array(b)].map(v=>v.toString(16).padStart(2,"0")).join("");}
+export function documentMatchesOwner(record,owner){return typeof owner==='string'&&owner.trim()!==''&&record?.owner===owner&&record?.viewer==='paper_pen_v3';}

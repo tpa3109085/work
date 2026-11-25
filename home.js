@@ -1,6 +1,6 @@
 document.title='工作平台｜鹿野分隊';
 // 入口頁：兩個卡片區（管制事項 / 鹿野分隊即時看板）
-const VERSION = '20261125-env-sources2';
+const VERSION = '20261125-env-sources3';
 
 const CARDS = [
   {

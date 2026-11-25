@@ -1,7 +1,7 @@
-import {documentDeadline,urgentDocuments,warningSignature,taipeiDayNumber} from './odis-deadlines.js?v=20261125-env-sources2';
-import {Cloud} from './api.js?v=20261125-env-sources2';
-import config from './config.js?v=20261125-env-sources2';
-import {ODIS_KEYS,documentKey} from './odis-protocol.js?v=20261125-env-sources2';
+import {documentDeadline,urgentDocuments,warningSignature,taipeiDayNumber} from './odis-deadlines.js?v=20261125-env-sources3';
+import {Cloud} from './api.js?v=20261125-env-sources3';
+import config from './config.js?v=20261125-env-sources3';
+import {ODIS_KEYS,documentKey,documentMatchesOwner} from './odis-protocol.js?v=20261125-env-sources3';
 /* ODIS: PIN-only local reader; no scheduled fetching or push. */
 const root=document.getElementById('odisRoot'),local=['127.0.0.1','localhost'].includes(location.hostname);
 let listing=null,busy=false,selectedCategory=null,listVisible=false,renderedDay=null,lastWarningSignature='';
@@ -61,7 +61,7 @@ async function remoteRequest(command,key){
  }throw Error('等候本機回覆逾時，請稍後手動重試。');}finally{status.textContent='';}
 }
 async function remoteList(){await remoteRequest('list');const data=await readRecord(ODIS_KEYS.list);if(!data)throw Error('尚未收到公文清單');return data;}
-async function remoteDocument(key,force=false){const record=await documentKey(key),cached=await readRecord(record);if(!force&&cached?.viewer==="paper_pen_v3")return cached;await remoteRequest('document',key);const data=await readRecord(record);if(!data||data.viewer!=='paper_pen_v3')throw Error('新版紙筆內容尚未同步，請重新手動讀取。');return data;}
+async function remoteDocument(key,force=false){const owner=listing?.owner,record=await documentKey(key),cached=await readRecord(record);if(!force&&documentMatchesOwner(cached,owner))return cached;await remoteRequest('document',key);const data=await readRecord(record);if(listing?.owner!==owner||!documentMatchesOwner(data,owner))throw Error('公文查看人已變更或內容尚未同步，請重新讀取清單及正文。');return data;}
 window.addEventListener('storage',event=>{if(cloud&&event.key===cloud.storageKey){listing=null;recordCache.clear();prompt();}});
 if(cloud?.session())readRecord(ODIS_KEYS.list).then(data=>{if(data){listing=data;renderList();}}).catch(error=>prompt(error.message));
 
