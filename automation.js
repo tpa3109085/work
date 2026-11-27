@@ -1,4 +1,4 @@
-import {traditionalUi} from './locale.js?v=20261127-navigation1';
+import {traditionalUi} from './locale.js?v=20261127-logout-home1';
 export const AUTOMATION_KEY='603f861f4871965ee0ba166853dddbc00f27ab98b094089fcff0c9022c073cfa';
 export function automationIsOld(report,now=Date.now()){
  const cadence=Math.max(0,Math.min(3600,Number(report.heartbeat_seconds)||0));

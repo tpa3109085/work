@@ -1,7 +1,7 @@
-import {documentDeadline,urgentDocuments,warningSignature,taipeiDayNumber} from './odis-deadlines.js?v=20261127-navigation1';
-import {Cloud} from './api.js?v=20261127-navigation1';
-import config from './config.js?v=20261127-navigation1';
-import {ODIS_KEYS,documentKey,documentMatchesOwner} from './odis-protocol.js?v=20261127-navigation1';
+import {documentDeadline,urgentDocuments,warningSignature,taipeiDayNumber} from './odis-deadlines.js?v=20261127-logout-home1';
+import {Cloud} from './api.js?v=20261127-logout-home1';
+import config from './config.js?v=20261127-logout-home1';
+import {ODIS_KEYS,documentKey,documentMatchesOwner} from './odis-protocol.js?v=20261127-logout-home1';
 /* ODIS: PIN-only local reader; no scheduled fetching or push. */
 const root=document.getElementById('odisRoot'),local=['127.0.0.1','localhost'].includes(location.hostname);
 let listing=null,busy=false,selectedCategory=null,listVisible=false,renderedDay=null,lastWarningSignature='';

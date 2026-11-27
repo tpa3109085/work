@@ -7,8 +7,14 @@
 .todos-page main>nav a{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:11px 17px;border-radius:10px;margin:0;font-size:15px;line-height:1.4;font-weight:750;text-decoration:none}
 .todos-page main>nav .back-home{background:#ffe09a;color:#243449;border:1px solid #efd08c}
 .todos-page main>nav .back-home:hover{background:#ffcf65}
-.todos-page main>nav .board-link{background:#edf7f3;color:#1e604d;border:1px solid #c1dfd1}
-.todos-page main>nav a[href="#taskListTitle"]{background:#eaf2ff;color:#245285;border-color:#c4d7f0}
+.todos-page main>nav a[href="./?view=duty"]{background:#edf8f2;color:#28775f;border:1px solid #c5e0d5}
+.todos-page main>nav a[href="./?view=duty"]:hover{background:#d6ebde}
+.todos-page main>nav a[href="./?view=calendar"]{background:#f5effc;color:#745398;border:1px solid #ddcfee}
+.todos-page main>nav a[href="./?view=calendar"]:hover{background:#ebdff7}
+.todos-page main>nav a[href="./?view=odis"]{background:#fff6e5;color:#8a5915;border:1px solid #ead7ae}
+.todos-page main>nav a[href="./?view=odis"]:hover{background:#fceacf}
+.todos-page main>nav a[href="#taskListTitle"]{background:#edf4ff;color:#2b609e;border:1px solid #cbdcf2}
+.todos-page main>nav a[href="#taskListTitle"]:hover{background:#e0edff}
 .todos-page a:focus-visible,.todos-page button:focus-visible{outline:3px solid #3679ba;outline-offset:3px}
 .todos-page .connection-status{border:1px solid #c3e0d2;background:#eaf6ee;color:#225b42}
 .todos-page #workspace>.dashboard{background:#f4f7ff;border:1px solid #ccd9ef;border-left:5px solid #427bd3;border-radius:16px;padding:21px;margin-bottom:20px}

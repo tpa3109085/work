@@ -1,6 +1,14 @@
+import {Cloud} from './api.js?v=20261127-logout-home1';
+import config from './config.js?v=20261127-logout-home1';
+
 document.title='工作平台｜鹿野分隊';
 // 入口頁：兩個卡片區（管制事項 / 鹿野分隊即時看板）
-const VERSION = '20261127-navigation1';
+const VERSION = '20261127-logout-home1';
+const local = ['127.0.0.1', 'localhost'].includes(location.hostname);
+let cloud = null;
+if (!local) {
+  try { cloud = new Cloud(config); } catch {}
+}
 
 const CARDS = [
   {
@@ -81,7 +89,23 @@ function render() {
   host.replaceChildren();
 
   const head = el('header', undefined, 'home-head');
+  const logout = el('button', '登出', 'home-logout');
+  logout.type = 'button';
+  logout.id = 'homeLogout';
+  logout.hidden = !cloud?.session();
+  logout.addEventListener('click', async () => {
+    if (!cloud) return;
+    logout.disabled = true;
+    logout.textContent = '登出中…';
+    try { await cloud.logout(); } catch {}
+    finally {
+      logout.disabled = false;
+      logout.textContent = '登出';
+      logout.hidden = true;
+    }
+  });
   head.append(
+    logout,
     el('p', '鹿野分隊 · 每日工作入口', 'home-eyebrow'),
     el('h1', '工作平台', 'home-title'),
     el('p', '管制事項、分隊即時看板、個人勤休月曆與公文系統，整合交辦追蹤、勤務狀態、個人排班與公文查閱。', 'home-sub')
