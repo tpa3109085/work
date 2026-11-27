@@ -1,17 +1,17 @@
-import {calendarEventUrl} from './calendar.js?v=20261127-home-worklist2';
-import {LocalCloud} from './local.js?v=20261127-home-worklist2';
-import {GroupSettings,readRegistry} from './groups.js?v=20261127-home-worklist2';
-import {RemoteControl} from './remote.js?v=20261127-home-worklist2';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261127-home-worklist2';
-import {renderOriginal} from './originals.js?v=20261127-home-worklist2';
-import {readImages,renderImages} from './images.js?v=20261127-home-worklist2';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261127-home-worklist2';
-import {readAutomation,renderAutomation} from './automation.js?v=20261127-home-worklist2';
-import {selectDashboardView} from './dashboard.js?v=20261127-home-worklist2';
-import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261127-home-worklist2';
-import config from './config.js?v=20261127-home-worklist2';
-import {Cloud} from './api.js?v=20261127-home-worklist2';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261127-home-worklist2';
+import {calendarEventUrl} from './calendar.js?v=20261127-entry-repair3';
+import {LocalCloud} from './local.js?v=20261127-entry-repair3';
+import {GroupSettings,readRegistry} from './groups.js?v=20261127-entry-repair3';
+import {RemoteControl} from './remote.js?v=20261127-entry-repair3';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261127-entry-repair3';
+import {renderOriginal} from './originals.js?v=20261127-entry-repair3';
+import {readImages,renderImages} from './images.js?v=20261127-entry-repair3';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261127-entry-repair3';
+import {readAutomation,renderAutomation} from './automation.js?v=20261127-entry-repair3';
+import {selectDashboardView} from './dashboard.js?v=20261127-entry-repair3';
+import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261127-entry-repair3';
+import config from './config.js?v=20261127-entry-repair3';
+import {Cloud} from './api.js?v=20261127-entry-repair3';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261127-entry-repair3';
 const $=id=>document.getElementById(id);
 let remote,groupControls;
 let removedSources=[];
@@ -102,7 +102,7 @@ for(const id of ['source','priority','status','completion','sort'])$(id).addEven
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session()){load();if(!document.hidden)remote?.refresh();}setInterval(()=>{if(!document.hidden&&cloud?.session()&&!editing)load();},120000);
-const BUILD='20261127-home-worklist2';
+const BUILD='20261127-entry-repair3';
 async function resumeHomeScreen(){
  if(document.hidden||editing||drafts.size||document.activeElement?.matches('input,textarea'))return;
  try{

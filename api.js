@@ -1,7 +1,7 @@
-import {REMOTE_KEYS} from './remote.js?v=20261127-home-worklist2';
-import {validateConfig} from './core.js?v=20261127-home-worklist2';
-import {HIDDEN_SOURCE_NOTE} from './originals.js?v=20261127-home-worklist2';
-import {BOARD_KEY,BOARD_KIND} from './board-data.js?v=20261127-home-worklist2';
+import {REMOTE_KEYS} from './remote.js?v=20261127-entry-repair3';
+import {validateConfig} from './core.js?v=20261127-entry-repair3';
+import {HIDDEN_SOURCE_NOTE} from './originals.js?v=20261127-entry-repair3';
+import {BOARD_KEY,BOARD_KIND} from './board-data.js?v=20261127-entry-repair3';
 const IMAGE_SUBJECT='MessageControl 圖片來源 v1';
 const TODO_FIELDS='todo_key,task,subject,source_type,assigned_to,priority,analysis_date,analysis_time,analysis_note,source_completed,synced_at';
 const STATE_FIELDS='todo_key,completed,completed_updated_at,deadline_mode,manual_date,manual_time,deadline_updated_at,assignment_status,assignment_updated_at';

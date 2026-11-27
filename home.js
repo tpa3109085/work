@@ -1,14 +1,6 @@
-import {Cloud} from './api.js?v=20261127-home-worklist2';
-import config from './config.js?v=20261127-home-worklist2';
-
 document.title='工作平台｜鹿野分隊';
-// 入口頁：四張卡片＋登入表單；登入後直接顯示完整工作清單。
-const VERSION = '20261127-home-worklist2';
-const local = ['127.0.0.1', 'localhost'].includes(location.hostname);
-let cloud = null;
-if (!local) {
-  try { cloud = new Cloud(config); } catch {}
-}
+// 入口頁：兩個卡片區（管制事項 / 鹿野分隊即時看板）
+const VERSION = '20261127-entry-repair3';
 
 const CARDS = [
   {
@@ -82,58 +74,14 @@ function clock() {
   });
 }
 
-function buildShell(main){
-  let shell = document.getElementById('homeShell');
-  if (!shell) {
-    shell = el('div', undefined, 'home-shell');
-    shell.id = 'homeShell';
-    main.prepend(shell);
-  }
-  let host = document.getElementById('homeEntry');
-  if (!host) {
-    host = el('div', undefined, 'home-entry');
-    host.id = 'homeEntry';
-    shell.append(host);
-  }
-  return host;
-}
-
-function buildWorkArea(main, shell){
-  let workArea = document.getElementById('workArea');
-  if (!workArea) {
-    workArea = el('div', undefined, 'work-area');
-    workArea.id = 'workArea';
-    for (const child of [...main.children]) {
-      if (child === shell || child.tagName === 'HEADER' || child.tagName === 'NAV') continue;
-      workArea.append(child);
-    }
-    main.append(workArea);
-  }
-  return workArea;
-}
-
 function render() {
-  const main = document.querySelector('main');
-  if (!main) return;
+  const host = document.getElementById('homeEntry');
+  if (!host) return;
 
-  const host = buildShell(main);
-  const workArea = buildWorkArea(main, document.getElementById('homeShell'));
   host.replaceChildren();
 
   const head = el('header', undefined, 'home-head');
-  const logout = el('button', '登出', 'home-logout');
-  logout.type = 'button';
-  logout.id = 'homeLogout';
-  logout.hidden = true;
-  logout.addEventListener('click', async () => {
-    if (!cloud) return;
-    logout.disabled = true;
-    logout.textContent = '登出中…';
-    try { await cloud.logout(); } catch {}
-    location.reload();
-  });
   head.append(
-    logout,
     el('p', '鹿野分隊 · 每日工作入口', 'home-eyebrow'),
     el('h1', '工作平台', 'home-title'),
     el('p', '管制事項、分隊即時看板、個人勤休月曆與公文系統，整合交辦追蹤、勤務狀態、個人排班與公文查閱。', 'home-sub')
@@ -146,34 +94,10 @@ function render() {
   foot.append(el('span', '台北時間　'), el('span', '', 'home-clock'));
   foot.lastChild.id = 'homeClock';
 
-  const cardsArea = el('div', undefined, 'home-cards-area');
-  cardsArea.append(grid, foot);
-  host.append(head, cardsArea);
-
-  const workspace = document.getElementById('workspace');
-  const loginPanel = document.getElementById('loginPanel');
-  let wasLoggedIn = false;
-  const sync = () => {
-    if (local) {
-      workArea.hidden = true;
-      cardsArea.hidden = false;
-      logout.hidden = true;
-      return;
-    }
-    const loggedIn = !!workspace && !workspace.hidden;
-    workArea.hidden = false;
-    cardsArea.hidden = loggedIn;
-    logout.hidden = !loggedIn;
-    if (loggedIn && !wasLoggedIn) window.scrollTo({top: 0, behavior: 'smooth'});
-    wasLoggedIn = loggedIn;
-  };
-  if (workspace) new MutationObserver(sync).observe(workspace, {attributes: true, attributeFilter: ['hidden']});
-  if (loginPanel) new MutationObserver(sync).observe(loginPanel, {attributes: true, attributeFilter: ['hidden']});
-  sync();
+  host.append(head, grid, foot);
 
   clock();
   setInterval(clock, 1000);
 }
 
 render();
-await import(`./app.js?v=${VERSION}`);
