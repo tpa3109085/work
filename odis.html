@@ -6,20 +6,21 @@
 <meta name="theme-color" content="#123d55">
 <title>公文系統・臺東縣政府 ODIS</title>
 <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="./odis.css?v=20261127-odis-polish1">
-<link rel="stylesheet" href="./platform-nav.css?v=20261127-odis-polish1">
+<link rel="stylesheet" href="./odis.css?v=20261127-home-worklist2">
+<link rel="stylesheet" href="./platform-nav.css?v=20261127-home-worklist2">
+<link rel="stylesheet" href="./platform-header.css?v=20261127-home-worklist2">
 </head>
 <body class="odis-page">
 <main class="odis-shell">
-  <header class="odis-header">
+  <header class="odis-header platform-header">
     <div class="odis-heading">
-      <p class="odis-eyebrow">臺東縣政府公文系統 ODIS</p>
+      <p class="odis-eyebrow eyebrow">臺東縣政府公文系統 ODIS</p>
       <h1>公文系統</h1>
-      <p>所選查看人的公文清單與內容（唯讀查詢，不會送出或簽核任何公文）</p>
+      <p class="sub">所選查看人的公文清單與內容（唯讀查詢，不會送出或簽核任何公文）</p>
     </div>
-    <div class="odis-head-meta">
+    <div class="odis-head-meta platform-header-meta">
       <span class="odis-tag">唯讀查詢</span>
-      <span class="odis-clock" id="odisClock"></span>
+      <span class="odis-clock platform-clock" id="odisClock"></span>
     </div>
   </header>
     <nav class="odis-nav platform-nav" aria-label="工作平台功能切換">
@@ -31,6 +32,6 @@
     </nav>
   <p id="odisProgress" role="status"></p><div id="odisRoot"></div>
 </main>
-<script type="module" src="./odis.js?v=20261127-odis-polish1"></script>
+<script type="module" src="./odis.js?v=20261127-home-worklist2"></script>
 </body>
 </html>

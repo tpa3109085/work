@@ -1,0 +1,26 @@
+/* Shared page header: eyebrow + title + description, colored by each entry card. */
+body .platform-header.platform-header{
+  --ph-accent:#2b609e;--ph-light:#edf4ff;--ph-edge:#cbdcf2;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px 24px;
+  padding:28px 30px;margin:0 0 18px;border-radius:18px;
+  border:1px solid var(--ph-edge);border-top:4px solid var(--ph-accent);
+  background:linear-gradient(135deg,#fff 0,var(--ph-light) 100%);
+  box-shadow:0 10px 28px #18354b0d;color:#20364d;box-sizing:border-box
+}
+body .platform-header.platform-header .eyebrow{display:block;margin:0 0 10px;font-size:12px;letter-spacing:.14em;font-weight:750;color:var(--ph-accent)}
+body .platform-header.platform-header h1{margin:0;font-size:30px;line-height:1.35;letter-spacing:.02em;font-weight:800;color:var(--ph-accent)}
+body .platform-header.platform-header .sub{margin:10px 0 0;font-size:14px;line-height:1.8;color:#4f6a80;max-width:780px}
+body .platform-header.platform-header .platform-header-meta{display:flex;flex-direction:column;align-items:flex-end;gap:10px;margin:0}
+body .platform-header.platform-header .platform-clock{display:inline-block;font-size:14px;line-height:1.4;font-variant-numeric:tabular-nums;color:var(--ph-accent);background:#fff;border:1px solid var(--ph-edge);border-radius:999px;padding:7px 13px;font-weight:650}
+body.todos-page main>header.platform-header.platform-header{--ph-accent:#2b609e;--ph-light:#edf4ff;--ph-edge:#cbdcf2}
+body.duty-board-page .board-header.platform-header.platform-header{--ph-accent:#28775f;--ph-light:#edf8f2;--ph-edge:#c5e0d5}
+body.calendar-page header.platform-header.platform-header{--ph-accent:#745398;--ph-light:#f5effc;--ph-edge:#ddcfee;max-width:min(1328px,calc(100% - 24px));margin:18px auto 0;padding:0;border-radius:18px}
+body.calendar-page header.platform-header.platform-header>div{max-width:none;margin:0;padding:28px 30px}
+body.odis-page .odis-header.platform-header.platform-header{--ph-accent:#8a5915;--ph-light:#fff6e5;--ph-edge:#ead7ae}
+@media(max-width:720px){
+  body .platform-header.platform-header{padding:22px 20px}
+  body .platform-header.platform-header h1{font-size:26px}
+  body .platform-header.platform-header .platform-header-meta{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-start}
+  body.calendar-page header.platform-header.platform-header{margin:14px 12px 0}
+  body.calendar-page header.platform-header.platform-header>div{padding:22px 20px}
+}

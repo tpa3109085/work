@@ -1,4 +1,4 @@
-import {traditionalUi} from './locale.js?v=20261127-odis-polish1';
+import {traditionalUi} from './locale.js?v=20261127-home-worklist2';
 const labels={checked:'已勾選',partial:'部分未勾選',unchecked:'未勾選',unknown:'待確認',no_items:'無對應項目'};
 const element=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const displayTime=value=>{const d=new Date(value||'');return Number.isFinite(d.getTime())?d.toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false}):'—';};
