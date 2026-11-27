@@ -1,9 +1,9 @@
-import {Cloud} from './api.js?v=20261127-logout-home1';
-import config from './config.js?v=20261127-logout-home1';
+import {Cloud} from './api.js?v=20261127-odis-polish1';
+import config from './config.js?v=20261127-odis-polish1';
 
 document.title='工作平台｜鹿野分隊';
 // 入口頁：兩個卡片區（管制事項 / 鹿野分隊即時看板）
-const VERSION = '20261127-logout-home1';
+const VERSION = '20261127-odis-polish1';
 const local = ['127.0.0.1', 'localhost'].includes(location.hostname);
 let cloud = null;
 if (!local) {

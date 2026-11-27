@@ -1,4 +1,4 @@
-import {REMOTE_KEYS,REMOTE_KIND,onlineHost,remoteRecord} from './remote.js?v=20261127-logout-home1';
+import {REMOTE_KEYS,REMOTE_KIND,onlineHost,remoteRecord} from './remote.js?v=20261127-odis-polish1';
 export function readRegistry(rows){try{const result=JSON.parse(rows.find(x=>x.todo_key===REMOTE_KEYS.registry)?.original_text||'null');return result?.kind===REMOTE_KIND?result:null;}catch{return null;}}
 export class GroupSettings{
  constructor(cloud,panel,changed){this.cloud=cloud;this.panel=panel;this.changed=changed;this.registry={groups:[],removed:[]};this.busy=false;this.signature='';}

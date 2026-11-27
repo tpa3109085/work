@@ -6,18 +6,21 @@
 <meta name="theme-color" content="#123d55">
 <title>公文系統・臺東縣政府 ODIS</title>
 <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="./odis.css?v=20261127-logout-home1">
-<link rel="stylesheet" href="./platform-nav.css?v=20261127-logout-home1">
+<link rel="stylesheet" href="./odis.css?v=20261127-odis-polish1">
+<link rel="stylesheet" href="./platform-nav.css?v=20261127-odis-polish1">
 </head>
 <body class="odis-page">
 <main class="odis-shell">
   <header class="odis-header">
-    <div>
+    <div class="odis-heading">
       <p class="odis-eyebrow">臺東縣政府公文系統 ODIS</p>
       <h1>公文系統</h1>
       <p>所選查看人的公文清單與內容（唯讀查詢，不會送出或簽核任何公文）</p>
     </div>
-    <span class="odis-clock" id="odisClock"></span>
+    <div class="odis-head-meta">
+      <span class="odis-tag">唯讀查詢</span>
+      <span class="odis-clock" id="odisClock"></span>
+    </div>
   </header>
     <nav class="odis-nav platform-nav" aria-label="工作平台功能切換">
       <a class="odis-home-link" href="./">← 返回卡片首頁</a>
@@ -28,6 +31,6 @@
     </nav>
   <p id="odisProgress" role="status"></p><div id="odisRoot"></div>
 </main>
-<script type="module" src="./odis.js?v=20261127-logout-home1"></script>
+<script type="module" src="./odis.js?v=20261127-odis-polish1"></script>
 </body>
 </html>

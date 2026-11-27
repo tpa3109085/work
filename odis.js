@@ -1,7 +1,7 @@
-import {documentDeadline,urgentDocuments,warningSignature,taipeiDayNumber} from './odis-deadlines.js?v=20261127-logout-home1';
-import {Cloud} from './api.js?v=20261127-logout-home1';
-import config from './config.js?v=20261127-logout-home1';
-import {ODIS_KEYS,documentKey,documentMatchesOwner} from './odis-protocol.js?v=20261127-logout-home1';
+import {documentDeadline,urgentDocuments,warningSignature,taipeiDayNumber} from './odis-deadlines.js?v=20261127-odis-polish1';
+import {Cloud} from './api.js?v=20261127-odis-polish1';
+import config from './config.js?v=20261127-odis-polish1';
+import {ODIS_KEYS,documentKey,documentMatchesOwner} from './odis-protocol.js?v=20261127-odis-polish1';
 /* ODIS: PIN-only local reader; no scheduled fetching or push. */
 const root=document.getElementById('odisRoot'),local=['127.0.0.1','localhost'].includes(location.hostname);
 let listing=null,busy=false,selectedCategory=null,listVisible=false,renderedDay=null,lastWarningSignature='';
@@ -13,9 +13,9 @@ const stamp=value=>value?new Date(value).toLocaleString('zh-TW',{timeZone:'Asia/
 async function request(path,options={}){const response=await fetch(path,{cache:'no-store',...options});if(!response.ok)throw Error('本機公文服務未啟動，請先開啟本機網頁。');return response.json();}
 function prompt(message=''){
  listing=null;listVisible=false;lastWarningSignature='';if(deadlineDialog.open)deadlineDialog.close();deadlineDialog.replaceChildren();root.replaceChildren();const panel=el('section',undefined,'odis-panel');panel.append(el('h2','公文系統查看'));
- if(!local&&!cloud.session()){panel.append(el('p','請先登入工作平台，再返回公文頁查看。'));const login=el('a','登入工作平台');login.href='./?view=todos';panel.append(login);root.append(panel);return;}
- panel.append(el('p','公文資料由本機後台憑證服務讀取，登入後於此頁查看清單與內容。'));
- const button=el('button','讀取公文'),error=el('p',message,'odis-error');button.type='button';error.setAttribute('role','alert');panel.append(button,error);root.append(panel);
+ if(!local&&!cloud.session()){const gate=el('div',undefined,'odis-gate');gate.append(el('h3','請先登入工作平台'),el('p','登入後回到本頁，即可查看你的公文清單與內容。'));const login=el('a','登入工作平台','odis-gate-link');login.href='./?view=todos';gate.append(login);panel.append(gate);root.append(panel);return;}
+ const intro=el('div',undefined,'odis-intro');intro.append(el('span','ODIS · 唯讀查詢','odis-intro-badge'),el('h3','開始查看公文','odis-intro-title'),el('p','公文資料由本機後台憑證服務讀取；登入後即可在此查看清單與內容。','odis-intro-text'));
+ const button=el('button','讀取公文','odis-primary'),error=el('p',message,'odis-error');button.type='button';error.setAttribute('role','alert');intro.append(button,error);panel.append(intro);root.append(panel);
  button.addEventListener('click',async()=>{if(busy)return;busy=true;button.disabled=true;button.textContent='正在讀取…';error.textContent='';try{const data=local?await request('./api/odis?refresh=1'):await remoteList();if(!data.ok)throw Error(data.error||'無法讀取公文');listing=data;renderList();}catch(e){error.textContent=e.message;}finally{button.disabled=false;button.textContent='讀取公文';busy=false;}});
 
 }

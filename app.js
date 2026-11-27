@@ -1,17 +1,17 @@
-import {calendarEventUrl} from './calendar.js?v=20261127-logout-home1';
-import {LocalCloud} from './local.js?v=20261127-logout-home1';
-import {GroupSettings,readRegistry} from './groups.js?v=20261127-logout-home1';
-import {RemoteControl} from './remote.js?v=20261127-logout-home1';
-import {matchesSource,renderSourceOptions} from './sources.js?v=20261127-logout-home1';
-import {renderOriginal} from './originals.js?v=20261127-logout-home1';
-import {readImages,renderImages} from './images.js?v=20261127-logout-home1';
-import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261127-logout-home1';
-import {readAutomation,renderAutomation} from './automation.js?v=20261127-logout-home1';
-import {selectDashboardView} from './dashboard.js?v=20261127-logout-home1';
-import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261127-logout-home1';
-import config from './config.js?v=20261127-logout-home1';
-import {Cloud} from './api.js?v=20261127-logout-home1';
-import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261127-logout-home1';
+import {calendarEventUrl} from './calendar.js?v=20261127-odis-polish1';
+import {LocalCloud} from './local.js?v=20261127-odis-polish1';
+import {GroupSettings,readRegistry} from './groups.js?v=20261127-odis-polish1';
+import {RemoteControl} from './remote.js?v=20261127-odis-polish1';
+import {matchesSource,renderSourceOptions} from './sources.js?v=20261127-odis-polish1';
+import {renderOriginal} from './originals.js?v=20261127-odis-polish1';
+import {readImages,renderImages} from './images.js?v=20261127-odis-polish1';
+import {inDueWindow,matchesDueFilter} from './tracking.js?v=20261127-odis-polish1';
+import {readAutomation,renderAutomation} from './automation.js?v=20261127-odis-polish1';
+import {selectDashboardView} from './dashboard.js?v=20261127-odis-polish1';
+import {AssignmentDrafts,sortTasks,resetFilters} from './workspace.js?v=20261127-odis-polish1';
+import config from './config.js?v=20261127-odis-polish1';
+import {Cloud} from './api.js?v=20261127-odis-polish1';
+import {deadline,mergeRows,validDate,validTime} from './core.js?v=20261127-odis-polish1';
 const $=id=>document.getElementById(id);
 let remote,groupControls;
 let removedSources=[];
@@ -102,7 +102,7 @@ for(const id of ['source','priority','status','completion','sort'])$(id).addEven
 $('saveDeadline').addEventListener('click',()=>saveDeadline('manual'));$('resetDeadline').addEventListener('click',()=>saveDeadline('analysis'));$('clearDeadline').addEventListener('click',()=>saveDeadline('manual',true));
 $('cancelDeadline').addEventListener('click',()=>{if(!busy){editing=null;$('deadlineDialog').close();load();}});$('deadlineDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else editing=null;});
 if(cloud?.session()){load();if(!document.hidden)remote?.refresh();}setInterval(()=>{if(!document.hidden&&cloud?.session()&&!editing)load();},120000);
-const BUILD='20261127-logout-home1';
+const BUILD='20261127-odis-polish1';
 async function resumeHomeScreen(){
  if(document.hidden||editing||drafts.size||document.activeElement?.matches('input,textarea'))return;
  try{

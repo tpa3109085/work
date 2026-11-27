@@ -6,6 +6,8 @@ body nav.platform-nav>a[href="./?view=todos"],body nav.platform-nav>a[href="#tas
 body nav.platform-nav>a[href="./?view=duty"]{background:#edf8f2;color:#28775f;border:1px solid #c5e0d5}
 body nav.platform-nav>a[href="./?view=calendar"]{background:#f5effc;color:#745398;border:1px solid #ddcfee}
 body nav.platform-nav>a[href="./?view=odis"]{background:#fff6e5;color:#8a5915;border:1px solid #ead7ae}
+body nav.platform-nav>button{background:#eef3f8;color:#2f4f68;border:1px solid #d3e0ea}
+body nav.platform-nav>button:hover{background:#e3ecf5}
 body nav.platform-nav>a:hover{filter:brightness(.98)}
 body nav.platform-nav>:focus-visible{outline:3px solid currentColor;outline-offset:3px}
 body.calendar-page nav.platform-nav{max-width:1328px;margin:18px auto 0;padding:0 clamp(12px,4vw,52px);background:transparent;border:0;box-shadow:none}
