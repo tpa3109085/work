@@ -1,12 +1,12 @@
-import {traditionalUi} from './locale.js?v=20261125-duty-reminder1';
-import {renderDutyCards} from './duty-cards.js?v=20261125-duty-reminder1';
-import {renderIcare} from './icare.js?v=20261125-duty-reminder1';
-import {Cloud} from './api.js?v=20261125-duty-reminder1';
-import config from './config.js?v=20261125-duty-reminder1';
-import {boardView} from './board-data.js?v=20261125-duty-reminder1';
+import {traditionalUi} from './locale.js?v=20261127-navigation1';
+import {renderDutyCards} from './duty-cards.js?v=20261127-navigation1';
+import {renderIcare} from './icare.js?v=20261127-navigation1';
+import {Cloud} from './api.js?v=20261127-navigation1';
+import config from './config.js?v=20261127-navigation1';
+import {boardView} from './board-data.js?v=20261127-navigation1';
 document.title='分隊即時看板';
 document.body.className='duty-board-page';
-document.body.innerHTML=`<main class="board-shell"><header class="board-header"><div><p class="board-eyebrow">工作平台・消防勤務</p><h1>分隊即時看板</h1><p>單位狀態與當日勤務為主體 · 車輛保養勾選 · 上班人員火搶裝備勾選 · 今日未填報</p></div><div><span id="boardClock" class="board-clock"></span><nav><a class="back-todos" href="./?view=todos">← 返回管制事項</a><a class="back-home" href="./">入口首頁</a><a class="back-calendar" href="./?view=calendar">消防勤休月曆</a><button id="boardFullscreen" type="button">全螢幕顯示</button></nav></div></header><section id="boardRoot" aria-label="勤務與保養卡片"></section><section id="icareRoot" aria-label="iCare 今日未填報"></section><aside class="board-settings"><span id="boardMessage" role="status"></span><div><button id="boardConnect" type="button">連接／重新登入消防系統</button><button id="boardRefresh" type="button">立即讀取來源</button></div></aside><footer>自動顯示最新讀數 · 看板每 15 秒更新，來源每日 10:00、14:00 採集 · 台北時間 · 只讀取，不代勾選</footer></main>`;
+document.body.innerHTML=`<main class="board-shell"><header class="board-header"><div><p class="board-eyebrow">工作平台・消防勤務</p><h1>分隊即時看板</h1><p>單位狀態與當日勤務為主體 · 車輛保養勾選 · 上班人員火搶裝備勾選 · 今日未填報</p></div><div><span id="boardClock" class="board-clock"></span></div></header><nav class="board-nav platform-nav" aria-label="工作區切換"><a class="back-home" href="./">← 返回入口</a><a class="back-todos" href="./?view=todos">管制事項 ↗</a><a class="back-calendar" href="./?view=calendar">消防勤休月曆</a><a class="back-odis" href="./?view=odis">公文系統 ↗</a><button id="boardFullscreen" type="button">全螢幕顯示</button></nav><section id="boardRoot" aria-label="勤務與保養卡片"></section><section id="icareRoot" aria-label="iCare 今日未填報"></section><aside class="board-settings"><span id="boardMessage" role="status"></span><div><button id="boardConnect" type="button">連接／重新登入消防系統</button><button id="boardRefresh" type="button">立即讀取來源</button></div></aside><footer>自動顯示最新讀數 · 看板每 15 秒更新，來源每日 10:00、14:00 採集 · 台北時間 · 只讀取，不代勾選</footer></main>`;
 const root=document.getElementById('boardRoot'),icareRoot=document.getElementById('icareRoot'),message=document.getElementById('boardMessage');
 document.querySelector('.board-header h1').textContent='分隊即時看板';
 document.querySelector('.board-eyebrow').textContent='工作平台・消防勤務';
@@ -16,8 +16,8 @@ let loading=false,acting=false,lastData=null,icareLoading=false;
 const cloud=local?null:new Cloud(config);
 const auth=document.createElement('section');auth.className='board-login';auth.hidden=true;
 auth.innerHTML='<h2>登入分隊看板</h2><p>使用管制事項的同一個帳號，查看本機同步的勤務與保養讀數。</p><form><label>電子信箱<input name="email" type="email" autocomplete="username" required></label><label>密碼<input name="password" type="password" autocomplete="current-password" required></label><button type="submit">登入看板</button><p class="board-login-error" role="alert"></p></form>';
-document.querySelector('.board-header').after(auth);
-const logout=document.createElement('button');logout.type='button';logout.textContent='登出';logout.hidden=true;document.querySelector('.board-header nav').append(logout);
+document.querySelector('.board-nav').after(auth);
+const logout=document.createElement('button');logout.type='button';logout.textContent='登出';logout.hidden=true;document.querySelector('.board-nav').append(logout);
 function clearPrivate(){lastData=null;root.replaceChildren();icareRoot.replaceChildren();message.textContent='';if(cloud)cloud.resetCaches();}
 function showLogin(){clearPrivate();auth.hidden=false;logout.hidden=true;}
 auth.querySelector('form').addEventListener('submit',async event=>{event.preventDefault();const form=event.currentTarget,button=form.querySelector('button'),error=form.querySelector('[role=alert]');button.disabled=true;error.textContent='';try{await cloud.login(form.elements.email.value.trim(),form.elements.password.value);auth.hidden=true;await load();}catch(e){error.textContent=traditionalUi(e.message);}finally{form.elements.password.value='';button.disabled=false;}});

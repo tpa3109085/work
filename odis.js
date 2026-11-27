@@ -1,7 +1,7 @@
-import {documentDeadline,urgentDocuments,warningSignature,taipeiDayNumber} from './odis-deadlines.js?v=20261125-duty-reminder1';
-import {Cloud} from './api.js?v=20261125-duty-reminder1';
-import config from './config.js?v=20261125-duty-reminder1';
-import {ODIS_KEYS,documentKey,documentMatchesOwner} from './odis-protocol.js?v=20261125-duty-reminder1';
+import {documentDeadline,urgentDocuments,warningSignature,taipeiDayNumber} from './odis-deadlines.js?v=20261127-navigation1';
+import {Cloud} from './api.js?v=20261127-navigation1';
+import config from './config.js?v=20261127-navigation1';
+import {ODIS_KEYS,documentKey,documentMatchesOwner} from './odis-protocol.js?v=20261127-navigation1';
 /* ODIS: PIN-only local reader; no scheduled fetching or push. */
 const root=document.getElementById('odisRoot'),local=['127.0.0.1','localhost'].includes(location.hostname);
 let listing=null,busy=false,selectedCategory=null,listVisible=false,renderedDay=null,lastWarningSignature='';
@@ -10,10 +10,9 @@ const CATEGORIES=["主辦公文","受會公文","決行公文","會核公文"];
 const cloud=local?null:new Cloud(config);let recordOwner=null;const recordCache=new Map();
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const stamp=value=>value?new Date(value).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false}):'—';
-function note(){root.append(el('p','手動查看 · 後台憑證驗證 · 不設定 10:00 排程 · 不推播','odis-hint'));}
 async function request(path,options={}){const response=await fetch(path,{cache:'no-store',...options});if(!response.ok)throw Error('本機公文服務未啟動，請先開啟本機網頁。');return response.json();}
 function prompt(message=''){
- listing=null;listVisible=false;lastWarningSignature='';if(deadlineDialog.open)deadlineDialog.close();deadlineDialog.replaceChildren();root.replaceChildren();note();const panel=el('section',undefined,'odis-panel');panel.append(el('h2','公文系統查看'));
+ listing=null;listVisible=false;lastWarningSignature='';if(deadlineDialog.open)deadlineDialog.close();deadlineDialog.replaceChildren();root.replaceChildren();const panel=el('section',undefined,'odis-panel');panel.append(el('h2','公文系統查看'));
  if(!local&&!cloud.session()){panel.append(el('p','請先登入工作平台，再返回公文頁查看。'));const login=el('a','登入工作平台');login.href='./?view=todos';panel.append(login);root.append(panel);return;}
  panel.append(el('p','公文資料由本機後台憑證服務讀取，登入後於此頁查看清單與內容。'));
  const button=el('button','讀取公文'),error=el('p',message,'odis-error');button.type='button';error.setAttribute('role','alert');panel.append(button,error);root.append(panel);
@@ -23,14 +22,14 @@ function prompt(message=''){
 function renderList(){
  listVisible=true;renderedDay=taipeiDayNumber();
  const items=(listing.items||[]).filter(i=>Number.isInteger(i.category)&&i.category>=0&&i.category<4);if(!CATEGORIES[selectedCategory])selectedCategory=items[0]?.category??0;
- root.replaceChildren();note();const panel=el('section',undefined,'odis-panel');panel.append(el('h2',listing.owner+'的公文 · '+items.length+' 件'),el('p','來源讀取：'+stamp(listing.fetched_at)+(listing.cached?'（快取）':''),'odis-hint'),el('p','主辦、受會、決行、會核 · 點選分類卡片查看公文','odis-hint'));
+ root.replaceChildren();const panel=el('section',undefined,'odis-panel');panel.append(el('h2',listing.owner+'的公文 · '+items.length+' 件'),el('p','來源讀取：'+stamp(listing.fetched_at)+(listing.cached?'（快取）':''),'odis-hint'),el('p','主辦、受會、決行、會核 · 點選分類卡片查看公文','odis-hint'));
  const exit=el('button','結束查看');exit.type='button';exit.addEventListener('click',async()=>{if(busy)return;busy=true;try{if(local)await request('./api/odis/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});recordCache.clear();prompt();}catch(e){panel.append(el('p',e.message));}finally{busy=false;}});panel.append(exit);
  const cards=el('div',undefined,'odis-category-cards');cards.setAttribute('aria-label','公文分類');
  CATEGORIES.forEach((label,category)=>{const card=el('button',undefined,'odis-category-card'+(selectedCategory===category?' is-active':''));card.type='button';card.dataset.category=String(category);card.setAttribute('aria-pressed',String(selectedCategory===category));card.append(el('span',label),el('strong',String(items.filter(i=>i.category===category).length)),el('small','件'));card.addEventListener('click',()=>{selectedCategory=category;renderList();});cards.append(card);});panel.append(cards,el('h3',CATEGORIES[selectedCategory]));
  const selected=items.filter(i=>i.category===selectedCategory);if(!selected.length)panel.append(el('p','此類目前沒有公文。','odis-empty'));
  const list=el('ul',undefined,'odis-list');for(const item of selected){const row=el('li',undefined,'odis-item'),button=el('button');button.type='button';button.append(el('div',item.status+' · '+item.doc_no,'odis-docno'),el('div',item.subject||'（無主旨）','odis-subject'),el('div',(item.date_label||'日期')+'：'+(item.date||'—'),'odis-date'));const due=documentDeadline(item);if(due&&due.days>=0&&due.days<=3)button.append(el('span',due.label,'odis-due-badge'+(due.days===0?' is-today':'')));button.addEventListener('click',()=>openDoc(item));row.append(button);list.append(row);}panel.append(list);root.append(panel);renderDeadlineWarnings(items);
 }
-async function openDoc(item,force=false){if(busy)return;if(deadlineDialog.open)deadlineDialog.close();listVisible=false;busy=true;const panel=el('section',undefined,'odis-panel'),back=el('button','返回公文清單');back.type='button';back.addEventListener('click',()=>{if(!busy)renderList();});root.replaceChildren();note();root.append(panel);const renew=el('button','更新簽稿正文');renew.type='button';renew.addEventListener('click',()=>openDoc(item,true));panel.append(back,renew,el('h2',item.subject),el('p','正在讀取公文內容…'));
+async function openDoc(item,force=false){if(busy)return;if(deadlineDialog.open)deadlineDialog.close();listVisible=false;busy=true;const panel=el('section',undefined,'odis-panel'),back=el('button','返回公文清單');back.type='button';back.addEventListener('click',()=>{if(!busy)renderList();});root.replaceChildren();root.append(panel);const renew=el('button','更新簽稿正文');renew.type='button';renew.addEventListener('click',()=>openDoc(item,true));panel.append(back,renew,el('h2',item.subject),el('p','正在讀取公文內容…'));
  try{const data=local?await request('./api/odis/doc/'+encodeURIComponent(item.key)):await remoteDocument(item.key,force);panel.lastChild.remove();if(!data.ok)throw Error(data.error||'無法讀取公文');panel.append(el('p',data.doc_no+' · '+(data.date_label||'日期')+' '+(data.date||'—')),el('p',(data.content_source||'紙筆欄簽稿正文')+(data.pages?' · '+data.pages+' 頁':''),'odis-hint'),el('pre',data.content,'odis-doc-body'));if(data.truncated)panel.append(el('p','內容超出顯示上限。')); }catch(e){panel.append(el('p',e.message));}finally{busy=false;}}
 document.getElementById('odisRefresh').addEventListener('click',async()=>{if(!listing||busy)return;busy=true;try{const data=local?await request('./api/odis?refresh=1'):await remoteList();if(!data.ok)throw Error(data.error||'重新讀取失敗');listing=data;renderList();}catch(e){prompt(e.message);}finally{busy=false;}});
 function clock(){document.getElementById('odisClock').textContent=new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false});if(listing&&listVisible&&!document.hidden&&!busy&&renderedDay!==taipeiDayNumber())renderList();}clock();setInterval(clock,30000);prompt();

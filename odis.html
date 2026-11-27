@@ -6,7 +6,8 @@
 <meta name="theme-color" content="#123d55">
 <title>公文系統・臺東縣政府 ODIS</title>
 <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="./odis.css?v=20261125-duty-reminder1">
+<link rel="stylesheet" href="./odis.css?v=20261127-navigation1">
+<link rel="stylesheet" href="./platform-nav.css?v=20261127-navigation1">
 </head>
 <body class="odis-page">
 <main class="odis-shell">
@@ -16,17 +17,17 @@
       <h1>公文系統</h1>
       <p>所選查看人的公文清單與內容（唯讀查詢，不會送出或簽核任何公文）</p>
     </div>
-    <nav class="odis-nav" aria-label="工作平台功能切換">
+    <span class="odis-clock" id="odisClock"></span>
+  </header>
+    <nav class="odis-nav platform-nav" aria-label="工作平台功能切換">
       <a class="odis-home-link" href="./">← 返回卡片首頁</a>
       <a href="./?view=todos">管制事項</a>
       <a href="./?view=duty">分隊即時看板</a>
       <a href="./?view=calendar">個人勤休月曆</a>
       <button type="button" id="odisRefresh">重新整理</button>
-      <span class="odis-clock" id="odisClock"></span>
     </nav>
-  </header>
   <p id="odisProgress" role="status"></p><div id="odisRoot"></div>
 </main>
-<script type="module" src="./odis.js?v=20261125-duty-reminder1"></script>
+<script type="module" src="./odis.js?v=20261127-navigation1"></script>
 </body>
 </html>

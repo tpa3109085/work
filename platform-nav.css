@@ -1,0 +1,13 @@
+/* Navigation only: reuse the existing entrance card palette and todo layout. */
+body nav.platform-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 18px;padding:13px;background:#fff;border:1px solid #d5e1ef;border-radius:14px;box-shadow:0 5px 18px #18354b06;box-sizing:border-box}
+body nav.platform-nav>a,body nav.platform-nav>button{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:11px 17px;margin:0;border-radius:10px;box-sizing:border-box;font-family:inherit;font-size:15px;font-weight:750;line-height:1.4;text-decoration:none;white-space:normal;text-align:center}
+body nav.platform-nav>a[href="./"]{background:#ffe09a;color:#243449;border:1px solid #efd08c}
+body nav.platform-nav>a[href="./?view=todos"],body nav.platform-nav>a[href="#taskListTitle"]{background:#edf4ff;color:#2b609e;border:1px solid #cbdcf2}
+body nav.platform-nav>a[href="./?view=duty"]{background:#edf8f2;color:#28775f;border:1px solid #c5e0d5}
+body nav.platform-nav>a[href="./?view=calendar"]{background:#f5effc;color:#745398;border:1px solid #ddcfee}
+body nav.platform-nav>a[href="./?view=odis"]{background:#fff6e5;color:#8a5915;border:1px solid #ead7ae}
+body nav.platform-nav>a:hover{filter:brightness(.98)}
+body nav.platform-nav>:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+body.calendar-page nav.platform-nav{max-width:1328px;margin:18px auto 0;padding:0 clamp(12px,4vw,52px);background:transparent;border:0;box-shadow:none}
+.duty-board-page .board-header{margin-bottom:18px}
+@media(max-width:760px){body nav.platform-nav{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px;padding:11px}body nav.platform-nav>a[href="./"]{grid-column:1/-1}body nav.platform-nav>a,body nav.platform-nav>button{width:100%;min-width:0;padding:11px 9px;font-size:14px}}

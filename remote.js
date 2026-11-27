@@ -1,4 +1,4 @@
-import {traditionalUi} from './locale.js?v=20261125-duty-reminder1';
+import {traditionalUi} from './locale.js?v=20261127-navigation1';
 export const REMOTE_KEYS={"request": "a6d53352a372eec9d689ce04fd0be6df305ada0214245cf3a2a535b52097d625", "response": "dd17f71beb2aa8a465bec86e506d48aee500758d7cef28a575e1935947770d39", "host": "2be69bed40f0b882057ce5b6bf1b27c601a02749436588bd94b08730bf3a4929", "registry": "2a19c9a49803824ad8541487e6639f1e650f39cce701d811ab5b476d2ec4d551", "settings_request": "b7c3a7a145165ee7a3d17d31023e18043cd6d34087a0b4ebaced0f78f0246f02", "settings_response": "492bf00dbb1651dafcffc6cbfa9087a501bb8a83143a6c27c2c7fa284a43261b"};
 export const REMOTE_KIND='mc_remote_line_v1';
 const ACTIVE=new Set(['queued','exporting','importing','analyzing']);
